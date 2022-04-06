@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&display=swap">
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="icon" href="img/favicon.ico">
+        <title>Mahjong Tools.</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <header class="header">
+            <div class="hamburger">
+                <a href="home.html" class="logo">Mahjong Tools.</a>
+                <div class="btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="overlay"></div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="" class="item">オーラス条件</a></li>
+                    <li><a href="" class="item">半荘条件</a></li>
+                    <li><a href="" class="item">清算</a></li>
+                    <li><a href="" class="item">牌理</a></li>
+                </ul>
+            </nav>
+            <script src="js/script.js"></script>
+        </header>
+        <div class="wrapper">
+            <main class="main">
+                <h1>オーラス条件計算</h1>
+                <form>
+                    <h2>卓内</h2>
+                    <table class="player-tbl">
+                        <tr>
+                            <th>名前</th>
+                            <th>トータル</th>
+                            <th>持ち点</th>
+                            <th>親番</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="name" id="name-A" name="name-A" placeholder="Aさん" value="Aさん"></td>
+                            <td><input type="number" class="lg-num" id="total-A" name="total-A" placeholder="0" value="-25.5"></td>
+                            <td><input type="number" class="lg-num" id="score-A" name="score-A" placeholder="25000" value="25800"></td>
+                            <td><input type="radio" class="oya" id="oya-A" name="oya" form="oya" value="0"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="name" id="name-B" name="name-B" placeholder="Bさん" value="Bさん"></td>
+                            <td><input type="number" class="lg-num" id="total-B" name="total-B" placeholder="0" value="-47.5"></td>
+                            <td><input type="number" class="lg-num" id="score-B" name="score-B" placeholder="25000" value="27500"></td>
+                            <td><input type="radio" class="oya" id="oya-B" name="oya" form="oya" value="1"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="name" id="name-C" name="name-C" placeholder="Cさん" value="Cさん"></td>
+                            <td><input type="number" class="lg-num" id="total-C" name="total-C" placeholder="0" value="17.6"></td>
+                            <td><input type="number" class="lg-num" id="score-C" name="score-C" placeholder="25000" value="25700"></td>
+                            <td><input type="radio" class="oya" id="oya-C" name="oya" form="oya" value="2"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="name" id="name-D" name="name-D" placeholder="Dさん" value="Dさん"></td>
+                            <td><input type="number" class="lg-num" id="total-D" name="total-D" placeholder="0" value="55.4"></td>
+                            <td><input type="number" class="lg-num" id="score-D" name="score-D" placeholder="25000" value="21000"></td>
+                            <td><input type="radio" class="oya" id="oya-D" name="oya" form="oya" value="3" checked="checked"></td>
+                        </tr>
+                    </table>
+                    <p>&emsp;本場&thinsp;<input type="number" class="sm-num" id="honba" name="honba" value="0" min="0" max="10">
+                    &nbsp;供託&thinsp;<input type="number" class="sm-num" id="kyotaku" name="kyotaku" value="0" min="0" max="10"></p>
+                    <h2>卓外</h2>
+                    <table class="nonplayer-tbl">
+                        <tr>
+                            <th>名前</th>
+                            <th>トータル</th>
+                            <th></th>
+                        </tr>
+                    </table>
+                    <button type="button" class="add">＋</button>
+                    <h2>ルール</h2>
+                    <p>&emsp;<input type="number" class="lg-num" id="haikyu" name="haikyu" placeholder="25000" value="25000">&thinsp;点持ち
+                    &nbsp;<input type="number" class="lg-num" id="genten" name="genten" placeholder="30000" value="30000">&thinsp;点返し</p>
+                    <p>&emsp;ウマ&thinsp;<input type="number" class="sm-num" id="uma-3to2" name="uma-3to2" placeholder="10" value="10">&thinsp;-
+                    &thinsp;<input type="number" class="sm-num" id="uma-4to1" name="uma-4to1" placeholder="30" value="30"></p>
+                    <p>&emsp;オカ&thinsp;<input type="number" class="sm-num" id="oka" name="oka" placeholder="20" value="20"></p>
+                    <p>&emsp;同点時のウマオカ:&nbsp;折半<input type="radio" id="half-T" name="half" form="half" value="1" checked="checked">
+                        &nbsp;起家優先<input type="radio" id="half" name="half" form="half" value="0"></p>
+                    <p>&emsp;切り上げ満貫:&nbsp;あり<input type="radio" id="kiriage-T" name="kiriage" form="kiriage" value="1" checked="checked">
+                    &nbsp;なし<input type="radio" id="kiriage-F" name="kiriage" form="kiriage" value="0"></p>
+                    <p>&emsp;70符以上の考慮:&nbsp;する<input type="radio" id="rare-T" name="rare" form="rare" value="1" checked="checked">
+                    &nbsp;しない<input type="radio" id="rare-F" name="rare" form="rare" value="0"></p>
+                    <p>&emsp;残留供託:&nbsp;トップ取り<input type="radio" id="zanryu-T" name="zanryu" form="zanryu" value="1" checked="checked">
+                    &nbsp;そのまま<input type="radio" id="zanryu-F" name="zanryu" form="zanryu" value="0"></p>
+                    <p>&emsp;通過順位&thinsp;<input type="number" class="sm-num" id="target" name="target" value="1" min="1" max="10">&thinsp;位</p>
+                    <p>&emsp;同順位の考慮:&nbsp;単独のみ可<input type="radio" id="tie-T" name="tie" form="tie" value="1" checked="checked">
+                    &nbsp;タイでも可<input type="radio" id="tie-F" name="tie" form="tie" value="0"></p>
+                    <h3><button type="button" class="calc" id="calc" onclick="calcOrasu()">計算</button></h3>
+                    <script src="js/orasu.js"></script>
+                </form>
+            </main>
+            <div class="result hidden">
+                <h2><span id="name-A1-output"></span>の条件</h2>
+                <table class="result-tbl">
+                    <tr>
+                        <td>ツモ</span></td>
+                        <td><span id="result-tumoA-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-B1-output"></span>からロン</td>
+                        <td><span id="result-ronAfromB-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-C1-output"></span>からロン</td>
+                        <td><span id="result-ronAfromC-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-D1-output"></span>からロン</td>
+                        <td><span id="result-ronAfromD-output"></span></td>
+                    </tr>
+                </table>
+                <h2><span id="name-B2-output"></span>の条件</h2>
+                <table class="result-tbl">
+                    <tr>
+                        <td>ツモ</span></td>
+                        <td><span id="result-tumoB-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-A2-output"></span>からロン</td>
+                        <td><span id="result-ronBfromA-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-C2-output"></span>からロン</td>
+                        <td><span id="result-ronBfromC-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-D2-output"></span>からロン</td>
+                        <td><span id="result-ronBfromD-output"></span></td>
+                    </tr>
+                </table>
+                <h2><span id="name-C3-output"></span>の条件</h2>
+                <table class="result-tbl">
+                    <tr>
+                        <td>ツモ</span></td>
+                        <td><span id="result-tumoC-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-A3-output"></span>からロン</td>
+                        <td><span id="result-ronCfromA-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-B3-output"></span>からロン</td>
+                        <td><span id="result-ronCfromB-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-D3-output"></span>からロン</td>
+                        <td><span id="result-ronCfromD-output"></span></td>
+                    </tr>
+                </table>
+                <h2><span id="name-D4-output"></span>の条件</h2>
+                <table class="result-tbl">
+                    <tr>
+                        <td>ツモ</span></td>
+                        <td><span id="result-tumoD-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-A4-output"></span>からロン</td>
+                        <td><span id="result-ronDfromA-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-B4-output"></span>からロン</td>
+                        <td><span id="result-ronDfromB-output"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="name-C4-output"></span>からロン</td>
+                        <td><span id="result-ronDfromC-output"></span></td>
+                    </tr>
+                </table>
+                <h2>親(<span id="name-oya-output"></span>)のノーテン宣言条件</h2>
+                <table class="result-tbl">
+                    <tr>
+                        <td><span id="result-ryukyoku-output"></span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="copyright">
+                <p><small>&copy; 2022 Mahjong Tools.</small></p>
+            </div>
+        </footer>
+    </body>
+</html>
