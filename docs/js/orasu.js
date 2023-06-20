@@ -1,872 +1,1276 @@
 $(function() {
-    let i = 0;
     $(".add").click(function() {
-        $(".nonplayer-tbl").append("<tr> <td><input type=\"text\" class=\"name\" name=\"name\" placeholder=\"Xさん\"></td> <td><input type=\"number\" class=\"lg-num\" name=\"total\" placeholder=\"0\"></td> <td><button type=\"button\" class=\"del\">－</button></td> </tr>");
+        $(".all_players").append("<tr> <td><input type=\"text\" class=\"name\" name=\"name\" placeholder=\"Xさん\" onfocus=\"this.select();\"></td> <td><input type=\"number\" class=\"total\" name=\"total\" step=\"0.1\" placeholder=\"0\" onfocus=\"this.select();\"></td> <td><button type=\"button\" class=\"del\">－</button></td> </tr>");
     });
-    $(".nonplayer-tbl").on("click", ".del", function() {
+    $(".all_players").on("click", ".del", function() {
         $(this).closest("tr").remove();
     });
 });
 
 
 
-/*
-変数名
-score: 現在の点数
-score_raw: 試合終了時の素点
-score_final: 試合終了時のウマオカ含む点数
-total: リーグにおけるトータル点数
-total_final: リーグにおける試合終了時のトータル点数
-*/
-
-function calcOrasu() {
+function doOrasu() {
 
 /* 関数 */
 
-// 点数表
-let tumo_oya = [
-    ["500all", 1500, 500],
-    ["700all", 2100, 700],
-    ["800all", 2400, 800],
-    ["1000all", 3000, 1000],
-    ["1200all", 3600, 1200],
-    ["1300all", 3900, 1300],
-    ["1500all", 4500, 1500],
-    ["1600all", 4800, 1600],
-    ["1800all", 5400, 1800],
-    ["2000all", 6000, 2000],
-    ["2300all", 6900, 2300],
-    ["2600all", 7800, 2600],
-    ["2900all", 8700, 2900],
-    ["3200all", 9600, 3200],
-    ["3600all", 10800, 3600],
-    ["3900all", 11700, 3900],
-    ["4000all", 12000, 4000],
-    ["6000all", 18000, 6000],
-    ["8000all", 24000, 8000],
-    ["12000all", 36000, 12000],
-    ["16000all", 48000, 16000],
-    ["32000all", 96000, 32000]
-    ];
-let tumo_ko = [
-    ["300-500", 1100, 300, 500],
-    ["400-700", 1500, 400, 700],
-    ["400-800", 1600, 400, 800],
-    ["500-1000", 2000, 500, 1000],
-    ["600-1200", 2400, 600, 1200],
-    ["700-1300", 2700, 700, 1300],
-    ["800-1500", 3100, 800, 1500],
-    ["800-1600", 3200, 800, 1600],
-    ["900-1800", 3600, 900, 1800],
-    ["1000-2000", 4000, 1000, 2000],
-    ["1200-2300", 4700, 1200, 2300],
-    ["1300-2600", 5200, 1300, 2600],
-    ["1500-2900", 5900, 1500, 2900],
-    ["1600-3200", 6400, 1600, 3200],
-    ["1800-3600", 7200, 1800, 3600],
-    ["2000-3900", 7900, 2000, 3900],
-    ["2000-4000", 8000, 2000, 4000],
-    ["3000-6000", 12000, 3000, 6000],
-    ["4000-8000", 16000, 4000, 8000],
-    ["6000-12000", 24000, 6000, 12000],
-    ["8000-16000", 32000, 8000, 16000],
-    ["16000-32000", 64000, 16000, 32000]
-];
-let ron_oya = [
-    ["1500", 1500],
-    ["2000", 2000],
-    ["2400", 2400],
-    ["2900", 2900],
-    ["3400", 3400],
-    ["3900", 3900],
-    ["4400", 4400],
-    ["4800", 4800],
-    ["5300", 5300],
-    ["5800", 5800],
-    ["6800", 6800],
-    ["7700", 7700],
-    ["8700", 8700],
-    ["9600", 9600],
-    ["10600", 10600],
-    ["11600", 11600],
-    ["12000", 12000],
-    ["18000", 18000],
-    ["24000", 24000],
-    ["36000", 36000],
-    ["48000", 48000],
-    ["96000", 96000]
-    ];
-let ron_ko = [
-    ["1000", 1000],
-    ["1300", 1300],
-    ["1600", 1600],
-    ["2000", 2000],
-    ["2300", 2300],
-    ["2600", 2600],
-    ["2900", 2900],
-    ["3200", 3200],
-    ["3600", 3600],
-    ["3900", 3900],
-    ["4500", 4500],
-    ["5200", 5200],
-    ["5800", 5800],
-    ["6400", 6400],
-    ["7100", 7100],
-    ["7700", 7700],
-    ["8000", 8000],
-    ["12000", 12000],
-    ["16000", 16000],
-    ["24000", 24000],
-    ["32000", 32000],
-    ["64000", 64000]
-];
+// 子のツモアガり
+let tsumoKo = [
+    {
+        "display": "300-500",
+        "fuhan": "30符1飜",
+        "gain": 1100,
+        "loseKo": 300,
+        "loseOya": 500
+    },
+    {
+        "display": "400-700",
+        "fuhan": "20符2飜・40符1飜",
+        "gain": 1500,
+        "loseKo": 400,
+        "loseOya": 700
+    },
+    {
+        "display": "400-800",
+        "fuhan": "25符2飜・50符1飜",
+        "gain": 1600,
+        "loseKo": 400,
+        "loseOya": 800
+    },
+    {
+        "display": "500-1000",
+        "fuhan": "30符2飜・60符1飜",
+        "gain": 2000,
+        "loseKo": 500,
+        "loseOya": 1000
+    },
+    {
+        "display": "600-1200",
+        "fuhan": "70符1飜",
+        "gain": 2400,
+        "loseKo": 600,
+        "loseOya": 1200
+    },
+    {
+        "display": "700-1300",
+        "fuhan": "20符3飜・40符2飜・80符1飜",
+        "gain": 2700,
+        "loseKo": 700,
+        "loseOya": 1300
+    },
+    {
+        "display": "800-1500",
+        "fuhan": "90符1飜",
+        "gain": 3100,
+        "loseKo": 800,
+        "loseOya": 1500
+    },
+    {
+        "display": "800-1600",
+        "fuhan": "25符3飜・50符2飜・100符1飜",
+        "gain": 3200,
+        "loseKo": 800,
+        "loseOya": 1600
+    },
+    {
+        "display": "900-1800",
+        "fuhan": "110符1飜",
+        "gain": 3600,
+        "loseKo": 900,
+        "loseOya": 1800
+    },
+    {
+        "display": "1000-2000",
+        "fuhan": "30符3飜・60符2飜",
+        "gain": 4000,
+        "loseKo": 1000,
+        "loseOya": 2000
+    },
+    {
+        "display": "1200-2300",
+        "fuhan": "70符2飜",
+        "gain": 4700,
+        "loseKo": 1200,
+        "loseOya": 2300
+    },
+    {
+        "display": "1300-2600",
+        "fuhan": "20符4飜・40符3飜・80符2飜",
+        "gain": 5200,
+        "loseKo": 1300,
+        "loseOya": 2600
+    },
+    {
+        "display": "1500-2900",
+        "fuhan": "90符1飜",
+        "gain": 5900,
+        "loseKo": 1500,
+        "loseOya": 2900
+    },
+    {
+        "display": "1600-3200",
+        "fuhan": "25符4飜・50符3飜・100符2飜",
+        "gain": 6400,
+        "loseKo": 1600,
+        "loseOya": 3200
+    },
+    {
+        "display": "1800-3600",
+        "fuhan": "110符2飜",
+        "gain": 7200,
+        "loseKo": 1800,
+        "loseOya": 3600
+    },
+    {
+        "display": "2000-3900",
+        "fuhan": "30符4飜・60符3飜",
+        "gain": 7900,
+        "loseKo": 2000,
+        "loseOya": 3900
+    },
+    {
+        "display": "2000-4000",
+        "fuhan": "満貫",
+        "gain": 8000,
+        "loseKo": 2000,
+        "loseOya": 4000
+    },
+    {
+        "display": "3000-6000",
+        "fuhan": "跳満",
+        "gain": 12000,
+        "loseKo": 3000,
+        "loseOya": 6000
+    },
+    {
+        "display": "4000-8000",
+        "fuhan": "倍満",
+        "gain": 16000,
+        "loseKo": 4000,
+        "loseOya": 8000
+    },
+    {
+        "display": "6000-12000",
+        "fuhan": "三倍満",
+        "gain": 24000,
+        "loseKo": 6000,
+        "loseOya": 12000
+    },
+    {
+        "display": "8000-16000",
+        "fuhan": "役満",
+        "gain": 32000,
+        "loseKo": 8000,
+        "loseOya": 16000
+    },
+    {
+        "display": "16000-32000",
+        "fuhan": "ダブル役満",
+        "gain": 64000,
+        "loseKo": 16000,
+        "loseOya": 32000
+    }
+]
 
-// 切り上げ満貫と70符以上の除外
-function del(array, kiriage, rare) {
-    if (kiriage == 0) {
-        // 30符4翻除外
-        array.splice(15, 1);
+// 親のツモアガり
+let tsumoOya = [
+    {
+        "display": "500オール",
+        "fuhan": "30符1飜",
+        "gain": 1500,
+        "loseKo": 500
+    },
+    {
+        "display": "700オール",
+        "fuhan": "20符2飜・40符1飜",
+        "gain": 2100,
+        "loseKo": 700
+    },
+    {
+        "display": "800オール",
+        "fuhan": "25符2飜・50符1飜",
+        "gain": 2400,
+        "loseKo": 800
+    },
+    {
+        "display": "1000オール",
+        "fuhan": "30符2飜・60符1飜",
+        "gain": 3000,
+        "loseKo": 1000
+    },
+    {
+        "display": "1200オール",
+        "fuhan": "70符1飜",
+        "gain": 3600,
+        "loseKo": 1200
+    },
+    {
+        "display": "1300オール",
+        "fuhan": "20符3飜・40符2飜・80符1飜",
+        "gain": 3900,
+        "loseKo": 1300
+    },
+    {
+        "display": "1500オール",
+        "fuhan": "90符1飜",
+        "gain": 4500,
+        "loseKo": 1500
+    },
+    {
+        "display": "1600オール",
+        "fuhan": "25符3飜・50符2飜・100符1飜",
+        "gain": 4800,
+        "loseKo": 1600
+    },
+    {
+        "display": "1800オール",
+        "fuhan": "110符1飜",
+        "gain": 5400,
+        "loseKo": 1800
+    },
+    {
+        "display": "2000オール",
+        "fuhan": "30符3飜・60符2飜",
+        "gain": 6000,
+        "loseKo": 2000
+    },
+    {
+        "display": "2300オール",
+        "fuhan": "70符2飜",
+        "gain": 6900,
+        "loseKo": 2300
+    },
+    {
+        "display": "2600オール",
+        "fuhan": "20符4飜・40符3飜・80符2飜",
+        "gain": 7800,
+        "loseKo": 2600
+    },
+    {
+        "display": "2900オール",
+        "fuhan": "90符1飜",
+        "gain": 8700,
+        "loseKo": 2900
+    },
+    {
+        "display": "3200オール",
+        "fuhan": "25符4飜・50符3飜・100符2飜",
+        "gain": 9600,
+        "loseKo": 3200
+    },
+    {
+        "display": "3600オール",
+        "fuhan": "110符2飜",
+        "gain": 10800,
+        "loseKo": 3600
+    },
+    {
+        "display": "3900オール",
+        "fuhan": "30符4飜・60符3飜",
+        "gain": 11700,
+        "loseKo": 3900
+    },
+    {
+        "display": "4000オール",
+        "fuhan": "満貫",
+        "gain": 12000,
+        "loseKo": 4000
+    },
+    {
+        "display": "6000オール",
+        "fuhan": "跳満",
+        "gain": 18000,
+        "loseKo": 6000
+    },
+    {
+        "display": "8000オール",
+        "fuhan": "倍満",
+        "gain": 24000,
+        "loseKo": 8000
+    },
+    {
+        "display": "12000オール",
+        "fuhan": "三倍満",
+        "gain": 36000,
+        "loseKo": 12000
+    },
+    {
+        "display": "16000オール",
+        "fuhan": "役満",
+        "gain": 48000,
+        "loseKo": 16000
+    },
+    {
+        "display": "32000オール",
+        "fuhan": "ダブル役満",
+        "gain": 96000,
+        "loseKo": 32000
     }
-    if (rare == 0) {
-        // 110符2翻除外
-        array.splice(14, 1);
-        // 90符2翻除外
-        array.splice(12, 1);
-        // 70符2翻除外
-        array.splice(10, 1);
-        // 110符1翻除外
-        array.splice(8, 1);
-        // 90符1翻除外
-        array.splice(6, 1);
-        // 70符1翻除外
-        array.splice(4, 1);
+]
+
+// 親のロンアガり
+let ronKo = [
+    {
+        "display": "1000",
+        "fuhan": "30符1飜",
+        "gain": 1000,
+        "lose": 1000
+    },
+    {
+        "display": "1300",
+        "fuhan": "40符1飜",
+        "gain": 1300,
+        "lose": 1300
+    },
+    {
+        "display": "1600",
+        "fuhan": "25符2飜・50符1飜",
+        "gain": 1600,
+        "lose": 1600
+    },
+    {
+        "display": "2000",
+        "fuhan": "30符2飜・60符1飜",
+        "gain": 2000,
+        "lose": 2000
+    },
+    {
+        "display": "2300",
+        "fuhan": "70符1飜",
+        "gain": 2300,
+        "lose": 2300
+    },
+    {
+        "display": "2600",
+        "fuhan": "40符2飜・80符1飜",
+        "gain": 2600,
+        "lose": 2600
+    },
+    {
+        "display": "2900",
+        "fuhan": "90符1飜",
+        "gain": 2900,
+        "lose": 2900
+    },
+    {
+        "display": "3200",
+        "fuhan": "25符3飜・50符2飜・100符1飜",
+        "gain": 3200,
+        "lose": 3200
+    },
+    {
+        "display": "3600",
+        "fuhan": "110符1飜",
+        "gain": 3600,
+        "lose": 3600
+    },
+    {
+        "display": "3900",
+        "fuhan": "30符3飜・60符2飜",
+        "gain": 3900,
+        "lose": 3900
+    },
+    {
+        "display": "4500",
+        "fuhan": "70符2飜",
+        "gain": 4500,
+        "lose": 4500
+    },
+    {
+        "display": "5200",
+        "fuhan": "40符3飜・80符2飜",
+        "gain": 5200,
+        "lose": 5200
+    },
+    {
+        "display": "5800",
+        "fuhan": "90符1飜",
+        "gain": 5800,
+        "lose": 5800
+    },
+    {
+        "display": "6400",
+        "fuhan": "25符4飜・50符3飜・100符2飜",
+        "gain": 6400,
+        "lose": 6400
+    },
+    {
+        "display": "7100",
+        "fuhan": "110符2飜",
+        "gain": 7100,
+        "lose": 7100
+    },
+    {
+        "display": "7700",
+        "fuhan": "30符4飜・60符3飜",
+        "gain": 7700,
+        "lose": 7700
+    },
+    {
+        "display": "8000",
+        "fuhan": "満貫",
+        "gain": 8000,
+        "lose": 8000
+    },
+    {
+        "display": "12000",
+        "fuhan": "跳満",
+        "gain": 12000,
+        "lose": 12000
+    },
+    {
+        "display": "16000",
+        "fuhan": "倍満",
+        "gain": 16000,
+        "lose": 16000
+    },
+    {
+        "display": "24000",
+        "fuhan": "三倍満",
+        "gain": 24000,
+        "lose": 24000
+    },
+    {
+        "display": "32000",
+        "fuhan": "役満",
+        "gain": 32000,
+        "lose": 32000
+    },
+    {
+        "display": "64000",
+        "fuhan": "ダブル役満",
+        "gain": 64000,
+        "lose": 64000
     }
-    return array;
-}
+]
+
+// 親のロンアガり
+let ronOya = [
+    {
+        "display": "1500",
+        "fuhan": "30符1飜",
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "2000",
+        "fuhan": "40符1飜",
+        "gain": 2000,
+        "lose": 2000
+    },
+    {
+        "display": "2400",
+        "fuhan": "25符2飜・50符1飜",
+        "gain": 2400,
+        "lose": 2400
+    },
+    {
+        "display": "2900",
+        "fuhan": "30符2飜・60符1飜",
+        "gain": 2900,
+        "lose": 2900
+    },
+    {
+        "display": "3400",
+        "fuhan": "70符1飜",
+        "gain": 3400,
+        "lose": 3400
+    },
+    {
+        "display": "3900",
+        "fuhan": "40符2飜・80符1飜",
+        "gain": 3900,
+        "lose": 3900
+    },
+    {
+        "display": "4400",
+        "fuhan": "90符1飜",
+        "gain": 4400,
+        "lose": 4400
+    },
+    {
+        "display": "4800",
+        "fuhan": "25符3飜・50符2飜・100符1飜",
+        "gain": 4800,
+        "lose": 4800
+    },
+    {
+        "display": "5300",
+        "fuhan": "110符1飜",
+        "gain": 5300,
+        "lose": 5300
+    },
+    {
+        "display": "5800",
+        "fuhan": "30符3飜・60符2飜",
+        "gain": 5800,
+        "lose": 5800
+    },
+    {
+        "display": "6800",
+        "fuhan": "70符2飜",
+        "gain": 6800,
+        "lose": 6800
+    },
+    {
+        "display": "7700",
+        "fuhan": "40符3飜・80符2飜",
+        "gain": 7700,
+        "lose": 7700
+    },
+    {
+        "display": "8700",
+        "fuhan": "90符1飜",
+        "gain": 8700,
+        "lose": 8700
+    },
+    {
+        "display": "9600",
+        "fuhan": "25符4飜・50符3飜・100符2飜",
+        "gain": 9600,
+        "lose": 9600
+    },
+    {
+        "display": "10600",
+        "fuhan": "110符2飜",
+        "gain": 10600,
+        "lose": 10600
+    },
+    {
+        "display": "11600",
+        "fuhan": "30符4飜・60符3飜",
+        "gain": 11600,
+        "lose": 11600
+    },
+    {
+        "display": "12000",
+        "fuhan": "満貫",
+        "gain": 12000,
+        "lose": 12000
+    },
+    {
+        "display": "18000",
+        "fuhan": "跳満",
+        "gain": 18000,
+        "lose": 18000
+    },
+    {
+        "display": "24000",
+        "fuhan": "倍満",
+        "gain": 24000,
+        "lose": 24000
+    },
+    {
+        "display": "36000",
+        "fuhan": "三倍満",
+        "gain": 36000,
+        "lose": 36000
+    },
+    {
+        "display": "48000",
+        "fuhan": "役満",
+        "gain": 48000,
+        "lose": 48000
+    },
+    {
+        "display": "96000",
+        "fuhan": "ダブル役満",
+        "gain": 96000,
+        "lose": 96000
+    }
+]
 
 // 流局
 let bappu = [
-    ["全員ノーテン", 0, 0, 0, 0],
-    ["Aの1人テンパイ", 3000, -1000, -1000, -1000],
-    ["Bの1人テンパイ", -1000, 3000, -1000, -1000],
-    ["Cの1人テンパイ", -1000, -1000, 3000, -1000],
-    ["Dの1人テンパイ", -1000, -1000, -1000, 3000],
-    ["A・Bの2人テンパイ", 1500, 1500, -1500, -1500],
-    ["A・Cの2人テンパイ", 1500, -1500, 1500, -1500],
-    ["A・Dの2人テンパイ", 1500, -1500, -1500, 1500],
-    ["B・Cの2人テンパイ", -1500, 1500, 1500, -1500],
-    ["B・Dの2人テンパイ", -1500, 1500, -1500, 1500],
-    ["C・Dの2人テンパイ", -1500, -1500, 1500, 1500],
-    ["A・B・Cの3人テンパイ", 1000, 1000, 1000, -3000],
-    ["A・B・Dの3人テンパイ", 1000, 1000, -3000, 1000],
-    ["A・C・Dの3人テンパイ", 1000, -3000, 1000, 1000],
-    ["B・C・Dの3人テンパイ", -3000, 1000, 1000, 1000],
-    ["全員テンパイ", 0, 0, 0, 0]
-];
+    {
+        "display": "全員ノーテン",
+        "tenpai": [false, false, false, false],
+        "gain": 0,
+        "lose": 0
+    },
+    {
+        "display": "1人テンパイ",
+        "tenpai": [true, false, false, false],
+        "gain": 3000,
+        "lose": 1000
+    },
+    {
+        "display": "1人テンパイ",
+        "tenpai": [false, true, false, false],
+        "gain": 3000,
+        "lose": 1000
+    },
+    {
+        "display": "1人テンパイ",
+        "tenpai": [false, false, true, false],
+        "gain": 3000,
+        "lose": 1000
+    },
+    {
+        "display": "1人テンパイ",
+        "tenpai": [false, false, false, true],
+        "gain": 3000,
+        "lose": 1000
+    },
+    {
+        "display": "2人テンパイ",
+        "tenpai": [true, true, false, false],
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "2人テンパイ",
+        "tenpai": [true, false, true, false],
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "2人テンパイ",
+        "tenpai": [true, false, false, true],
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "2人テンパイ",
+        "tenpai": [false, true, true, false],
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "2人テンパイ",
+        "tenpai": [false, true, false, true],
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "2人テンパイ",
+        "tenpai": [false, false, true, true],
+        "gain": 1500,
+        "lose": 1500
+    },
+    {
+        "display": "3人テンパイ",
+        "tenpai": [true, true, true, false],
+        "gain": 1000,
+        "lose": 3000
+    },
+    {
+        "display": "3人テンパイ",
+        "tenpai": [true, true, false, true],
+        "gain": 1000,
+        "lose": 3000
+    },
+    {
+        "display": "3人テンパイ",
+        "tenpai": [true, false, true, true],
+        "gain": 1000,
+        "lose": 3000
+    },
+    {
+        "display": "3人テンパイ",
+        "tenpai": [false, true, true, true],
+        "gain": 1000,
+        "lose": 3000
+    },
+    {
+        "display": "全員テンパイ",
+        "tenpai": [true, true, true, true],
+        "gain": 0,
+        "lose": 0
+    }
+]
 
-// 名前の置換と親による分類
-function repl(bappu, name, oya) {
-    for (let i = 0; i < bappu.length; i++) {
-        bappu[i][0] = bappu[i][0].replace("A", name[0]);
-        bappu[i][0] = bappu[i][0].replace("B", name[1]);
-        bappu[i][0] = bappu[i][0].replace("C", name[2]);
-        bappu[i][0] = bappu[i][0].replace("D", name[3]);
+// 切り上げ満貫と70符以上の除外
+function delKiriageAndOver70(options, arrayTsumoOrRon) {
+    let array = arrayTsumoOrRon
+    // 切り上げ満貫
+    if (options.kiriage == true) {
+        array = array.filter(item => item.fuhan != "30符4飜・60符3飜")
     }
-    switch (oya) {
-        case 0:
-            bappu.splice(15, 1);
-            bappu.splice(13, 1);
-            bappu.splice(12, 1);
-            bappu.splice(11, 1);
-            bappu.splice(7, 1);
-            bappu.splice(6, 1);
-            bappu.splice(5, 1);
-            bappu.splice(1, 1);
-            break;
-        case 1:
-            bappu.splice(15, 1);
-            bappu.splice(14, 1);
-            bappu.splice(12, 1);
-            bappu.splice(11, 1);
-            bappu.splice(9, 1);
-            bappu.splice(8, 1);
-            bappu.splice(5, 1);
-            bappu.splice(2, 1);
-            break;
-        case 2:
-            bappu.splice(15, 1);
-            bappu.splice(14, 1);
-            bappu.splice(13, 1);
-            bappu.splice(11, 1);
-            bappu.splice(10, 1);
-            bappu.splice(8, 1);
-            bappu.splice(6, 1);
-            bappu.splice(3, 1);
-            break;
-        case 3:
-            bappu.splice(15, 1);
-            bappu.splice(14, 1);
-            bappu.splice(13, 1);
-            bappu.splice(12, 1);
-            bappu.splice(10, 1);
-            bappu.splice(9, 1);
-            bappu.splice(7, 1);
-            bappu.splice(4, 1);
-            break;
-        default:
-            break;
+    // 70符以上
+    if (options.over70 == false) {
+        array = array.filter(item => item.fuhan != "70符1飜" && item.fuhan != "90符1飜" && item.fuhan != "110符1飜" && item.fuhan != "70符2飜" && item.fuhan != "90符2飜" && item.fuhan != "110符2飜")
     }
-    return bappu;
+    return array
 }
 
-// ランク付け(タイのときは全員平均順位)
-function rank_ave(array) {
-    let array_rank = [];
-    for (let i = 0; i < array.length; i++) {
-        let tmp = new Array(array[i].length);
-        for (let j = 0; j < array[i].length; j++) {
-            tmp[j] = 0.5;
-            for (let k = 0; k < array[i].length; k++) {
-                if (array[i][j] < array[i][k]) {
-                    tmp[j] += 1;
-                }
-                else if (array[i][j] == array[i][k]) {
-                    tmp[j] += 0.5;
-                }
-            }
+// 親とリーチの確認
+function checkOyaAndRiichiKyotaku(players, options) {
+    // 親
+    options.oya = players.filter(item => item.oya == true)[0].id
+    // リーチ
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].riichi == true) {
+            options.kyotaku += 1
         }
-        array_rank.push(tmp);
     }
-    return array_rank;
+    return options
 }
 
-// ランク付け(タイのときは全員最上順位)
-function rank_eq(array) {
-    let array_rank = [];
-    for (let i = 0; i < array.length; i++) {
-        let tmp = new Array(array[i].length);
-        for (let j = 0; j < array[i].length; j++) {
-            tmp[j] = 1;
-            for (let k = 0; k < array[i].length; k++) {
-                if (array[i][j] < array[i][k]) {
-                    tmp[j] += 1;
-                }
-            }
+// リーチの確認
+function checkRiichiScore(players) {
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].riichi == true) {
+            players[i].score -= 1000
         }
-        array_rank.push(tmp);
     }
-    return array_rank;
+    return players
 }
 
-// ランク付け(タイのときでも上から順位付け)
-function rank_neq(array) {
-    let array_rank = [];
-    for (let i = 0; i < array.length; i++) {
-        let tmp = new Array(array[i].length);
-        for (let j = 0; j < array[i].length; j++) {
-            tmp[j] = 1;
-            for (let k = 0; k < array[i].length; k++) {
-                if (j > k && array[i][j] <= array[i][k]) {
-                    tmp[j] += 1;
+// 素点
+function addScoreFinal(players, options, tsumoKo, tsumoOya, ronKo, ronOya, horaID, hojyuID, horaNum) {
+    for (let i = 0; i < players.length; i++) {
+        // ツモアガり(和了者と放銃者が同じときは放銃者なしと判定)
+        if (horaID == hojyuID) {
+            // 和了
+            if (players[i].id == horaID) {
+                // 親のアガり
+                if (horaID == options.oya) {
+                    players[i].scoreFinal = players[i].score + tsumoOya[horaNum].gain + options.honba * 300 + options.kyotaku * 1000
+                    players[i].display = tsumoOya[horaNum].display
                 }
-                if (j <= k && array[i][j] < array[i][k]) {
-                    tmp[j] += 1;
-                }
-            }
-        }
-        array_rank.push(tmp);
-    }
-    return array_rank;
-}
-
-// 素点の計算(ツモアガり)
-function tumo_agari(hora, tumo_oya, tumo_ko, score, oya, honba, kyotaku) {
-    let score_raw = [];
-    // 親のアガり
-    if (hora == oya) {
-        for (let i = 0; i < tumo_oya.length; i++) {
-            let tmp = new Array(4);
-            for (let j = 0; j < 4; j++) {
-                // 和了
-                if (j == hora) {
-                    tmp[j] = score[j] + tumo_oya[i][1] + honba * 300 + kyotaku * 1000;
-                }
-                // 被ツモ
+                // 子のアガり
                 else {
-                    tmp[j] = score[j] - tumo_oya[i][2] - honba * 100;
+                    players[i].scoreFinal = players[i].score + tsumoKo[horaNum].gain + options.honba * 300 + options.kyotaku * 1000
+                    players[i].display = tsumoKo[horaNum].display
                 }
             }
-            score_raw.push(tmp);
-        }
-    }
-    // 子のアガり
-    else {
-        for (let i = 0; i < tumo_ko.length; i++) {
-            let tmp = new Array(4);
-            for (let j = 0; j < 4; j++) {
-                // 和了
-                if (j == hora) {
-                    tmp[j] = score[j] + tumo_ko[i][1] + honba * 300 + kyotaku * 1000;
+            // 被ツモ
+            else {
+                // 親のアガり
+                if (horaID == options.oya) {
+                    players[i].scoreFinal = players[i].score - tsumoOya[horaNum].loseKo - options.honba * 100
+                    players[i].display = tsumoOya[horaNum].display
                 }
-                // 被ツモ(親)
-                else if (j == oya) {
-                    tmp[j] = score[j] - tumo_ko[i][3] - honba * 100;
-                }
-                // 被ツモ(子)
+                // 子のアガり
                 else {
-                    tmp[j] = score[j] - tumo_ko[i][2] - honba * 100;
+                    // 親被り
+                    if (players[i].id == options.oya) {
+                        players[i].scoreFinal = players[i].score - tsumoKo[horaNum].loseOya - options.honba * 100
+                        players[i].display = tsumoKo[horaNum].display
+                    }
+                    else {
+                        players[i].scoreFinal = players[i].score - tsumoKo[horaNum].loseKo - options.honba * 100
+                        players[i].display = tsumoKo[horaNum].display
+                    }
                 }
             }
-            score_raw.push(tmp);
         }
-    }
-    return score_raw;
-}
-
-// 素点の計算(ロンアガり)
-function ron_agari(hora, hojyu, ron_oya, ron_ko, score, oya, honba, kyotaku) {
-    let score_raw = [];
-    // 親のアガり
-    if (hora == oya) {
-        for (let i = 0; i < ron_oya.length; i++) {
-            let tmp = new Array(4);
-            for (let j = 0; j < 4; j++) {
-                // 和了
-                if (j == hora) {
-                    tmp[j] = score[j] + ron_oya[i][1] + honba * 300 + kyotaku * 1000;
+        // ロンアガり(和了者と放銃者が異なるとき)
+        else {
+            // 和了
+            if (players[i].id == horaID) {
+                // 親のアガり
+                if (horaID == options.oya) {
+                    players[i].scoreFinal = players[i].score + ronOya[horaNum].gain + options.honba * 300 + options.kyotaku * 1000
+                    players[i].display = ronOya[horaNum].display
                 }
-                // 放銃
-                else if (j == hojyu) {
-                    tmp[j] = score[j] - ron_oya[i][1] - honba * 300;
-                }
-                // 横移動
+                // 子のアガり
                 else {
-                    tmp[j] = score[j]
+                    players[i].scoreFinal = players[i].score + ronKo[horaNum].gain + options.honba * 300 + options.kyotaku * 1000
+                    players[i].display = ronKo[horaNum].display
                 }
             }
-            score_raw.push(tmp);
-        }
-    }
-    // 子のアガり
-    else {
-        for (let i = 0; i < ron_ko.length; i++) {
-            let tmp = new Array(4);
-            for (let j = 0; j < 4; j++) {
-                // 和了
-                if (j == hora) {
-                    tmp[j] = score[j] + ron_ko[i][1] + honba * 300 + kyotaku * 1000;
+            // 放銃
+            else if (players[i].id == hojyuID) {
+                // 親のアガり
+                if (horaID == options.oya) {
+                    players[i].scoreFinal = players[i].score - ronOya[horaNum].lose - options.honba * 300
+                    players[i].display = ronOya[horaNum].display
                 }
-                // 放銃
-                else if (j == hojyu) {
-                    tmp[j] = score[j] - ron_ko[i][1] - honba * 300;
-                }
-                // 横移動
+                // 子のアガり
                 else {
-                    tmp[j] = score[j]
+                    players[i].scoreFinal = players[i].score - ronKo[horaNum].lose - options.honba * 300
+                    players[i].display = ronKo[horaNum].display
                 }
             }
-            score_raw.push(tmp);
-        }
-    }
-    return score_raw;
-}
-
-// 素点の計算(流局)
-function ryukyoku(bappu, score) {
-    let score_raw = [];
-    for (let i = 0; i < bappu.length; i++) {
-        let tmp = new Array(4);
-        for (let j = 0; j < 4; j++) {
-            tmp[j] = score[j] + bappu[i][j+1]
-        }
-        score_raw.push(tmp);
-    }
-    return score_raw;
-}
-
-// 残留供託の計算(流局)
-function calc_zanryu(score_raw, half, zanryu) {
-    let score_rank = [];
-    // 同点時の残留供託の扱い
-    if (half == 1) {
-        score_rank = rank_ave(score_raw);
-    }
-    else {
-        score_rank = rank_neq(score_raw);
-    }
-    let score_raw_ryukyoku = score_raw.slice(0);
-    // 流局時の残留供託の扱い
-    if (zanryu == 1) {
-        for (let i = 0; i < score_raw.length; i++) {
-            for (let j = 0; j < 4; j++) {
-                switch (score_rank[i][j]) {
-                    case 1:
-                        score_raw_ryukyoku[i][j] = score_raw[i][j] + kyotaku * 1000
-                        break;
-                    case 1.5:
-                        score_raw_ryukyoku[i][j] = score_raw[i][j] + kyotaku * 500
-                        break;
-                    default:
-                        break;
+            // 横移動
+            else {
+                // 親のアガり
+                if (horaID == options.oya) {
+                    players[i].scoreFinal = players[i].score
+                    players[i].display = ronOya[horaNum].display
+                }
+                // 子のアガり
+                else {
+                    players[i].scoreFinal = players[i].score
+                    players[i].display = ronKo[horaNum].display
                 }
             }
-            
         }
     }
-    return score_raw_ryukyoku;
+    return players
 }
 
-// ウマオカ含む点数の計算
-function calc_score(score_raw, genten, umaoka, half) {
-    let score_rank = [];
-    // 同点時のウマオカの扱い
-    if (half == 1) {
-        score_rank = rank_ave(score_raw);
-    }
-    else {
-        score_rank = rank_neq(score_raw);
-    }
-    let score_final = [];
-    for (let i = 0; i < score_raw.length; i++) {
-        let tmp = new Array(4);
-        for (let j = 0; j < 4; j++) {
-            // 順位に応じたウマオカを計算
-            switch (score_rank[i][j]) {
-                case 1:
-                    tmp[j] = (score_raw[i][j] - genten + umaoka[0]) / 1000;
-                    break;
-                case 2:
-                    tmp[j] = (score_raw[i][j] - genten + umaoka[1]) / 1000;
-                    break;
-                case 3:
-                    tmp[j] = (score_raw[i][j] - genten + umaoka[2]) / 1000;
-                    break;
-                case 4:
-                    tmp[j] = (score_raw[i][j] - genten + umaoka[3]) / 1000;
-                    break;
-                case 1.5:
-                    tmp[j] = (score_raw[i][j] - genten + (umaoka[0] + umaoka[1]) / 2) / 1000;
-                    break;
-                case 2.5:
-                    tmp[j] = (score_raw[i][j] - genten + (umaoka[1] + umaoka[2]) / 2) / 1000;
-                    break;
-                case 3.5:
-                    tmp[j] = (score_raw[i][j] - genten + (umaoka[2] + umaoka[3]) / 2) / 1000;
-                    break;
-                default:
-                    break;
+// 順位
+function addScoreRank(players, options) {
+    for (let i = 0; i < players.length; i++) {
+        // 同点のとき同順位
+        let numEq = 1
+        // 同点のとき別順位
+        let numNeq = 1
+        for (let j = 0; j < players.length; j++) {
+            if (players[i].scoreFinal < players[j].scoreFinal) {
+                numEq += 1
+                numNeq += 1
+            }
+            else if (players[i].scoreFinal == players[j].scoreFinal && players[i].id > players[j].id) {
+                numNeq += 1
+                if (options.tie == false) {
+                    numEq += 1
+                }
             }
         }
-        score_final.push(tmp);
+        players[i].rankEq = numEq
+        players[i].rankNeq = numNeq
     }
-    return score_final;
+    return players
 }
 
-// トータル点数の計算
-function calc_total(score_final, total) {
-    let total_final = [];
-    for (let i = 0; i < score_final.length; i++) {
-        let tmp = total.slice(0);
-        for (let j = 0; j < 4; j++) {
-            tmp[j] = Math.round(score_final[i][j] * 10 + total[j] * 10) / 10;
+// ウマオカ
+function calcUmaoka(players, options) {
+    let uma = [options.uma4to1, options.uma3to2, -options.uma3to2, -options.uma4to1]
+    let oka = (options.genten - options.haikyu) * 4
+    let umaoka = []
+    for (let i = 0; i < players.length; i++) {
+        let array = players.filter(item => item.rankEq == i + 1)
+        let sum = 0
+        let ave = 0
+        // ウマ
+        for (let j = 0; j < array.length; j++) {
+            sum += uma[i + j]
         }
-        total_final.push(tmp);
+        // オカ
+        if (i == 0) {
+            sum += oka
+        }
+        // 折半
+        if (array.length == 1 || array.length == 2 || array.length == 4) {
+            ave = sum / array.length
+        }
+        else if (array.length == 3) {
+            ave = sum / array.length
+            // 100点単位で切り捨て
+            ave = Math.floor(ave / 100) * 100
+        }
+        umaoka.push(ave)
     }
-    return total_final;
+    // 同順位の0値を修正
+    for (let i = 0; i < umaoka.length; i++) {
+        if (umaoka[i] == 0) {
+            umaoka[i] = umaoka[i - 1]
+        }
+    }
+    // 3人同順位の端数を修正
+    if (players.filter(item => item.rankEq == 1).length == 3) {
+        umaoka[0] = oka - (umaoka[1] + umaoka[2] + umaoka[3])
+    }
+    else if (players.filter(item => item.rankEq == 2).length == 3) {
+        umaoka[1] = oka - (umaoka[0] + umaoka[2] + umaoka[3])
+    }
+    return umaoka
 }
 
-// 条件判定
-function judge(total_final, hora, target, tie) {
-    // トータル同順位の扱い
-    let total_rank = [];
-    if (tie == 1) {
-        total_rank = rank_neq(total_final);
+// 順位点含むスコア
+function addTotalChange(players, options, umaoka) {
+    for (let i = 0; i < players.length; i++) {
+        players[i].totalChange = (players[i].scoreFinal - options.genten + umaoka[players[i].rankNeq - 1]) / 1000
     }
-    else {
-        total_rank = rank_eq(total_final);
-    }
-    let total_judge = [];
-    for (let i = 0; i < total_final.length; i++) {
-        if (total_rank[i][hora] <= target) {
-            total_judge.push("T");
+    return players
+}
+
+// トータル
+function addTotalFinal(players, allPlayers) {
+    for (let i = 0; i < allPlayers.length; i++) {
+        let array = players.filter(item => item.name == allPlayers[i].name)
+        if (array.length != 0) {
+            allPlayers[i].totalFinal = (allPlayers[i].total * 1000 + array[0].totalChange * 1000) / 1000
         }
         else {
-            total_judge.push("F");
+            allPlayers[i].totalFinal = allPlayers[i].total
         }
     }
-    return total_judge;
+    return allPlayers
 }
 
-// 判定結果を統合
-function int(tumo_oya, tumo_ko, ron_oya, ron_ko, total, score, oya, honba, kyotaku, genten, umaoka, half, target, tie) {
-    tumo_oya = del(tumo_oya, kiriage, rare);
-    tumo_ko = del(tumo_ko, kiriage, rare);
-    ron_oya = del(ron_oya, kiriage, rare);
-    ron_ko = del(ron_ko, kiriage, rare);
-    let judgement = [];
-    for (let hora = 0; hora < 4; hora++) {
-        let tmp = [];
-        for (let hojyu = 0; hojyu < 4; hojyu++) {
-            // ツモアガり
-            if (hojyu == hora) {
-                let score_raw = tumo_agari(hora, tumo_oya, tumo_ko, score, oya, honba, kyotaku);
-                let score_final = calc_score(score_raw, genten, umaoka, half);
-                let total_final = calc_total(score_final, total);
-                let total_judge = judge(total_final, hora, target, tie);
-                tmp.push(total_judge);
+// トータル順位と判定
+function addTotalRankAndJudge(allPlayers, options) {
+    for (let i = 0; i < allPlayers.length; i++) {
+        // 順位
+        let num = 1
+        for (let j = 0; j < allPlayers.length; j++) {
+            if (allPlayers[i].totalFinal < allPlayers[j].totalFinal) {
+                num += 1
             }
-            // ロンアガり
-            else {
-                let score_raw = ron_agari(hora, hojyu, ron_oya, ron_ko, score, oya, honba, kyotaku);
-                let score_final = calc_score(score_raw, genten, umaoka, half);
-                let total_final = calc_total(score_final, total);
-                let total_judge = judge(total_final, hora, target, tie);
-                tmp.push(total_judge);
+            else if (allPlayers[i].totalFinal == allPlayers[j].totalFinal && allPlayers[i].id > allPlayers[j].id) {
+                num += 1
             }
         }
-        judgement.push(tmp);
+        allPlayers[i].rank = num
+        // 判定
+        if (allPlayers[i].rank <= options.target) {
+            allPlayers[i].judge = true
+        }
+        else {
+            allPlayers[i].judge = false
+        }
     }
-    return judgement;
+    return allPlayers
+}
+
+// 結果を統合
+function createResults(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, ronOya, horaID, hojyuID) {
+    let results = []
+    for (let horaNum = 0; horaNum < tsumoKo.length; horaNum++) {
+        let array = {}
+        players = addScoreFinal(players, options, tsumoKo, tsumoOya, ronKo, ronOya, horaID, hojyuID, horaNum)
+        players = addScoreRank(players, options)
+        let umaoka = calcUmaoka(players, options)
+        players = addTotalChange(players, options, umaoka)
+        allPlayers = addTotalFinal(players, allPlayers)
+        allPlayers = addTotalRankAndJudge(allPlayers, options)
+        array.display = players[horaID].display
+        array.judge = allPlayers[horaID].judge
+        results.push(array)
+    }
+    return results
 }
 
 // 文章化
-function doc(judgement) {
-    let result = [];
-    for (let i = 0; i < 4; i++) {
-        let tmp = [];
-        for (let j = 0; j < judgement[i].length; j++) {
-            // 全てTのとき
-            if (judgement[i][j].every(value => value == "T") == true) {
-                tmp.push("無条件")
-            }
-            // 全てFのとき
-            else if (judgement[i][j].every(value => value == "F") == true) {
-                if (i == oya) {
-                    tmp.push("続行")
-                }
-                else {
-                    tmp.push("目無し")
-                }
-            }
-            // それ以外のとき
-            else {
-                let buf = "";
-                // 30符1翻判定のため先頭にFを追加
-                judgement[i][j].unshift("F");
-                // ツモアガり
-                if (i == j) {
-                    // 親のアガり
-                    if (i == oya) {
-                        for (let k = 0; k < judgement[i][j].length - 1; k++) {
-                            // FTと並んでいるとき
-                            if (judgement[i][j][k] == "F" && judgement[i][j][k+1] == "T") {
-                                buf = buf + tumo_oya[k][0] + "以上";
-                            }
-                            // TFと並んでいるとき
-                            if (judgement[i][j][k] == "T" && judgement[i][j][k+1] == "F") {
-                                // FTFと並んでいるとき
-                                if (judgement[i][j][k-1] == "F") {
-                                    buf = buf.slice(0, -2) + "<br>";
-                                }
-                                // それ以外のとき
-                                else {
-                                    buf = buf + tumo_oya[k-1][0] + "以下<br>";
-                                }
-                            }
-                        }
-                    }
-                    // 子のアガり
-                    else {
-                        for (let k = 0; k < judgement[i][j].length - 1; k++) {
-                            // FTが並んでいるとき
-                            if (judgement[i][j][k] == "F" && judgement[i][j][k+1] == "T") {
-                                buf = buf + tumo_ko[k][0] + "以上";
-                            }
-                            // TFと並んでいるとき
-                            if (judgement[i][j][k] == "T" && judgement[i][j][k+1] == "F") {
-                                // FTFと並んでいるとき
-                                if (judgement[i][j][k-1] == "F") {
-                                    buf = buf.slice(0, -2) + "<br>";
-                                }
-                                // それ以外のとき
-                                else {
-                                    buf = buf + tumo_ko[k-1][0] + "以下<br>";
-                                }
-                            }
-                        }
-                    }
-                }
-                // ロンアガり
-                else {
-                    // 親のアガり
-                    if (i == oya) {
-                        for (let k = 0; k < judgement[i][j].length - 1; k++) {
-                            // FTが並んでいるとき
-                            if (judgement[i][j][k] == "F" && judgement[i][j][k+1] == "T") {
-                                buf = buf + ron_oya[k][0] + "以上";
-                            }
-                            // TFと並んでいるとき
-                            if (judgement[i][j][k] == "T" && judgement[i][j][k+1] == "F") {
-                                // FTFと並んでいるとき
-                                if (judgement[i][j][k-1] == "F") {
-                                    buf = buf.slice(0, -2) + "<br>";
-                                }
-                                // それ以外のとき
-                                else {
-                                    buf = buf + ron_oya[k-1][0] + "以下<br>";
-                                }
-                            }
-                        }
-                    }
-                    // 子のアガり
-                    else {
-                        for (let k = 0; k < judgement[i][j].length - 1; k++) {
-                            // FTが並んでいるとき
-                            if (judgement[i][j][k] == "F" && judgement[i][j][k+1] == "T") {
-                                buf = buf + ron_ko[k][0] + "以上";
-                            }
-                            // TFと並んでいるとき
-                            if (judgement[i][j][k] == "T" && judgement[i][j][k+1] == "F") {
-                                // FTFと並んでいるとき
-                                if (judgement[i][j][k-1] == "F") {
-                                    buf = buf.slice(0, -2) + "<br>";
-                                }
-                                // それ以外のとき
-                                else {
-                                    buf = buf + ron_ko[k-1][0] + "以下<br>";
-                                }
-                            }
-                        }
-                    }
-                }
-                // 末尾が<br>のとき削除
-                if (buf.slice(-4) == "<br>") {
-                    buf = buf.slice(0, -4);
-                }
-                tmp.push(buf)
-            }
-        }
-        result.push(tmp)
+function docConditions(results, options, horaID, hojyuID) {
+    let outputs = {}
+    // ツモアガり(和了者と放銃者が同じときは放銃者なしと判定)
+    if (horaID == hojyuID) {
+        outputs.type = players[hojyuID].name + "のツモ"
     }
-    return result;
-}
-
-// 流局
-function int_ryukyoku(bappu, name, total, score, oya, genten, umaoka, half, zanryu, target, tie) {
-    // 判定結果を統合
-    bappu = repl(bappu, name, oya);
-    let score_raw = ryukyoku(bappu, score);
-    let score_raw_ryukyoku = calc_zanryu(score_raw, half, zanryu);
-    let score_final = calc_score(score_raw_ryukyoku, genten, umaoka, half);
-    let total_final = calc_total(score_final, total);
-    let total_judge = judge(total_final, oya, target, tie);
-    // 文章化
-    let result_ryukyoku = "";
-    // 全てTのとき
-    if (total_judge.every(value => value == "T") == true) {
-        result_ryukyoku = "無条件";
-    }
-    // 全てFのとき
-    else if (total_judge.every(value => value == "F") == true) {
-        result_ryukyoku = "テンパイ必須";
-    }
-    // それ以外のとき
+    // ロンアガり(和了者と放銃者が異なるとき)
     else {
-        for (let i = 0; i < total_judge.length; i++) {
-            if (total_judge[i] == "T") {
-                result_ryukyoku = result_ryukyoku + bappu[i][0] + "<br>";
+        outputs.type = players[hojyuID].name + "からロン"
+    }
+    if (results.every(item => item.judge == true) == true) {
+        outputs.condition = "無条件"
+    }
+    else if (results.every(item => item.judge == false) == true) {
+        if (horaID == options.oya) {
+            outputs.condition = "続行"
+        }
+        else {
+            outputs.condition = "目無し"
+        }
+    }
+    else {
+        // ダミーを先頭に追加
+        let dummy = {
+            display: "dummy",
+            judge: false
+        }
+        results.unshift(dummy)
+        let tmp = ""
+        for (let i = 0; i < results.length - 1; i++) {
+            // false, trueと並んでいるとき
+            if (results[i].judge == false && results[i + 1].judge == true) {
+                tmp = tmp + results[i + 1].display + "以上"
+            }
+            // true, falseと並んでいるとき
+            if (results[i].judge == true && results[i + 1].judge == false) {
+                // true, falseと並んでいる直前がfalseのとき
+                if (results[i - 1].judge == false) {
+                    tmp = tmp.slice(0, -2) + "<br>"
+                }
+                // true, falseと並んでいる直前がtrueのとき
+                else {
+                    tmp = tmp + results[i].display + "以下<br>"
+                }
             }
         }
         // 末尾が<br>のとき削除
-        if (result_ryukyoku.slice(-4) == "<br>") {
-            result_ryukyoku = result_ryukyoku.slice(0, -4);
+        if (tmp.slice(-4) == "<br>") {
+            tmp = tmp.slice(0, -4)
+        }
+        outputs.condition = tmp
+    }
+    return outputs
+}
+
+// 和了条件を計算
+function horaConditions(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, ronOya) {
+    let horaOutputs = []
+    for (let horaID = 0; horaID < players.length; horaID++) {
+        let array = []
+        for (let hojyuID = 0; hojyuID < players.length; hojyuID++) {
+            let results = createResults(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, ronOya, horaID, hojyuID)
+            let outputs = docConditions(results, options, horaID, hojyuID)
+            array.push(outputs)
+        }
+        horaOutputs.push(array)
+    }
+    return horaOutputs
+}
+
+// 流局素点
+function addScoreFinalRyukyoku(players, bappu, ryukyokuNum) {
+    for (let i = 0; i < players.length; i++) {
+        players[i].display = bappu[ryukyokuNum].display
+        players[i].tenpai = bappu[ryukyokuNum].tenpai
+        if (players[i].tenpai[i] == true) {
+            players[i].scoreFinal = players[i].score + bappu[ryukyokuNum].gain
+        }
+        else {
+            players[i].scoreFinal = players[i].score - bappu[ryukyokuNum].lose
         }
     }
-    return result_ryukyoku;
+    return players
+}
+
+// 残留供託
+function calcResidues(players, options) {
+    let array = players.filter(item => item.rankEq == 1)
+    let ave = 0
+    // 折半
+    if (array.length == 1 || array.length == 2 || array.length == 4) {
+        ave = options.kyotaku * 1000 / array.length
+    }
+    else if (array.length == 3) {
+        // 100点単位で切り捨て
+        ave = options.kyotaku * 300
+    }
+    // 1位に追加
+    let residues = [0, 0, 0, 0]
+    for (let i = 0; i < array.length; i++) {
+        residues[i] = ave
+    }
+    // 3人1位の端数を修正
+    if (array.length == 3) {
+        residues[0] = options.kyotaku * 1000 - (residues[1] + residues[2] + residues[3])
+    }
+    return residues
+}
+
+// 残留供託含むスコア
+function addTotalChangeRyukyoku(players, options, residues) {
+    if (options.residue == true) {
+        for (let i = 0; i < players.length; i++) {
+            players[i].totalChange = (players[i].totalChange * 1000 + residues[players[i].rankNeq - 1]) / 1000
+        }
+    }
+    return players
+}
+
+// 流局結果を統合
+function createResultsRyukyoku(players, allPlayers, options, bappu) {
+    let results = []
+    for (let ryukyokuNum = 0; ryukyokuNum < bappu.length; ryukyokuNum++) {
+        let array = {}
+        players = addScoreFinalRyukyoku(players, bappu, ryukyokuNum)
+        players = addScoreRank(players, options)
+        let umaoka = calcUmaoka(players, options)
+        players = addTotalChange(players, options, umaoka)
+        let residues = calcResidues(players, options)
+        players = addTotalChangeRyukyoku(players, options, residues)
+        allPlayers = addTotalFinal(players, allPlayers)
+        allPlayers = addTotalRankAndJudge(allPlayers, options)
+        array.display = players[options.oya].display
+        array.tenpai = players[options.oya].tenpai
+        array.judge = allPlayers[options.oya].judge
+        // 親のノーテン
+        if (array.tenpai[options.oya] == false) {
+            results.push(array)
+        }
+    }
+    return results
+}
+
+// 文章化
+function docConditionsRyukyoku(results, players, options) {
+    let outputs = {}
+    outputs.nameOya = players[options.oya].name
+    if (results.every(item => item.judge == false) == true) {
+        outputs.condition = "テンパイ必須"
+    }
+    else {
+        let tmp = ""
+        for (let i = 0; i < results.length; i++) {
+            if (results[i].judge == true) {
+                for (let j = 0; j < results[i].tenpai.length; j++) {
+                    if (results[i].tenpai[j] == true) {
+                        tmp = tmp + players[j].name + "・"
+                    }
+                }
+                // 末尾の"・"を削除
+                tmp = tmp.slice(0, -1)
+                let array = results[i].tenpai.filter(item => item == true)
+                if (array.length == 0 || array.length == 3) {
+                    tmp = tmp + results[i].display + "<br>"
+                }
+                else {
+                    tmp = tmp + "の" + results[i].display + "<br>"
+                }
+            }
+        }
+        // 末尾が<br>のとき削除
+        if (tmp.slice(-4) == "<br>") {
+            tmp = tmp.slice(0, -4)
+        }
+        outputs.condition = tmp
+    }
+    return outputs
+}
+
+// 和了条件を計算
+function ryukyokuConditions(players, allPlayers, options, bappu) {
+    let results = createResultsRyukyoku(players, allPlayers, options, bappu)
+    let ryukyokuOutputs = docConditionsRyukyoku(results, players, options)
+    return ryukyokuOutputs
+}
+
+/* 入力 */
+
+// 卓内
+let players = [
+    {
+        "id": 0,
+        "name": document.getElementById("name_0").value,
+        "total": document.getElementById("total_0").valueAsNumber,
+        "score": document.getElementById("score_0").valueAsNumber * 100,
+        "oya": document.getElementById("oya_0").checked,
+        "riichi": document.getElementById("riichi_0").checked
+    },
+    {
+        "id": 1,
+        "name": document.getElementById("name_1").value,
+        "total": document.getElementById("total_1").valueAsNumber,
+        "score": document.getElementById("score_1").valueAsNumber * 100,
+        "oya": document.getElementById("oya_1").checked,
+        "riichi": document.getElementById("riichi_1").checked
+    },
+    {
+        "id": 2,
+        "name": document.getElementById("name_2").value,
+        "total": document.getElementById("total_2").valueAsNumber,
+        "score": document.getElementById("score_2").valueAsNumber * 100,
+        "oya": document.getElementById("oya_2").checked,
+        "riichi": document.getElementById("riichi_2").checked
+    },
+    {
+        "id": 3,
+        "name": document.getElementById("name_3").value,
+        "total": document.getElementById("total_3").valueAsNumber,
+        "score": document.getElementById("score_3").valueAsNumber * 100,
+        "oya": document.getElementById("oya_3").checked,
+        "riichi": document.getElementById("riichi_3").checked
+    }
+]
+
+// 卓外
+let allPlayers = []
+let names = document.getElementsByName("name")
+let totals = document.getElementsByName("total")
+for (let i = 0; i < names.length; i++) {
+    let array = {
+        "id": 4 + i,
+        "name": names[i].value,
+        "total": totals[i].valueAsNumber
+    }
+    allPlayers.push(array)
+}
+for (let i = players.length - 1; i >= 0; i--) {
+    if (allPlayers.filter(item => item.name == players[i].name).length == 0) {
+        let array = {
+            "id": i,
+            "name": players[i].name,
+            "total": players[i].total
+        }
+        allPlayers.unshift(array)
+    }
+}
+
+// ルール
+let options = {
+    "honba": document.getElementById("honba").valueAsNumber,
+    "kyotaku": document.getElementById("kyotaku").valueAsNumber,
+    "haikyu": document.getElementById("haikyu").valueAsNumber * 100,
+    "genten": document.getElementById("genten").valueAsNumber * 100,
+    "uma4to1": document.getElementById("uma_4to1").valueAsNumber * 1000,
+    "uma3to2": document.getElementById("uma_3to2").valueAsNumber * 1000,
+    "tie": document.getElementById("tie_T").checked,
+    "kiriage": document.getElementById("kiriage_T").checked,
+    "over70": document.getElementById("over70_T").checked,
+    "residue": document.getElementById("residue_T").checked,
+    "target": document.getElementById("target").valueAsNumber
 }
 
 /* 実行 */
 
-// 値の入力
-let name = [
-    document.getElementById("name-A").value,
-    document.getElementById("name-B").value,
-    document.getElementById("name-C").value,
-    document.getElementById("name-D").value
-];
-let total = [
-    document.getElementById("total-A").valueAsNumber,
-    document.getElementById("total-B").valueAsNumber,
-    document.getElementById("total-C").valueAsNumber,
-    document.getElementById("total-D").valueAsNumber
-];
-let score = [
-    document.getElementById("score-A").valueAsNumber,
-    document.getElementById("score-B").valueAsNumber,
-    document.getElementById("score-C").valueAsNumber,
-    document.getElementById("score-D").valueAsNumber
-];
-let elems = "";
-let oya = "";
-elems = document.getElementsByName("oya");
-for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked){
-        oya = Number(elems[i].value);
-    }
-}
-let honba = document.getElementById("honba").valueAsNumber;
-let kyotaku = document.getElementById("kyotaku").valueAsNumber;
-let genten = document.getElementById("genten").valueAsNumber;
-let umaoka = [
-    (document.getElementById("uma-4to1").valueAsNumber + document.getElementById("oka").valueAsNumber) * 1000,
-    document.getElementById("uma-3to2").valueAsNumber * 1000,
-    - document.getElementById("uma-3to2").valueAsNumber * 1000,
-    - document.getElementById("uma-4to1").valueAsNumber * 1000,
-];
-let half = "";
-elems = document.getElementsByName("half");
-for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked){
-        half = Number(elems[i].value);
-    }
-}
-let kiriage = "";
-elems = document.getElementsByName("kiriage");
-for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked){
-        kiriage = Number(elems[i].value);
-    }
-}
-let rare = "";
-elems = document.getElementsByName("rare");
-for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked){
-        rare = Number(elems[i].value);
-    }
-}
-let zanryu = "";
-elems = document.getElementsByName("zanryu");
-for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked){
-        zanryu = Number(elems[i].value);
-    }
-}
-let target = document.getElementById("target").valueAsNumber;
-let tie = "";
-elems = document.getElementsByName("tie");
-for (let i = 0; i < elems.length; i++) {
-    if (elems[i].checked){
-        tie = Number(elems[i].value);
-    }
-}
+// 切り上げ満貫と70符以上の除外
+tsumoKo = delKiriageAndOver70(options, tsumoKo)
+tsumoOya = delKiriageAndOver70(options, tsumoOya)
+ronKo = delKiriageAndOver70(options, ronKo)
+ronOya = delKiriageAndOver70(options, ronOya)
 
-// 卓外ポイントを追加
-$("input[name='name']").each(function(i, elem){
-    name.push($(elem).val());
-});
-name = name.filter(Boolean);
-$("input[name='total']").each(function(i, elem){
-    total.push($(elem).val());
-});
-total = total.filter(Boolean);
-
-// 入力値を表示
-console.log("名前:" + name);
-console.log("トータル:" + total);
-console.log("持ち点:" + score);
-console.log("親:" + oya);
-console.log("本場:" + honba);
-console.log("供託:" + kyotaku);
-console.log("原点:" + genten);
-console.log("ウマオカ:" + umaoka);
-console.log("折半:" + half);
-console.log("切り上げ満貫:" + kiriage);
-console.log("70符以上:" + rare);
-console.log("残留供託:" + zanryu);
-console.log("名前:" + target);
-console.log("単独:" + tie);
+// 親とリーチの確認
+options = checkOyaAndRiichiKyotaku(players, options)
+players = checkRiichiScore(players)
 
 // 計算
-let judgement = int(tumo_oya, tumo_ko, ron_oya, ron_ko, total, score, oya, honba, kyotaku, genten, umaoka, half, target, tie)
-let result = doc(judgement);
-let result_ryukyoku = int_ryukyoku(bappu, name, total, score, oya, genten, umaoka, half, zanryu, target, tie);
+let horaOutputs = horaConditions(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, ronOya)
+let ryukyokuOutputs = ryukyokuConditions(players, allPlayers, options, bappu)
 
-// 計算結果を表示
-console.log("判定");
-console.log(judgement);
-console.log("条件");
-console.log(result);
+/* 出力 */
 
-// 値を出力
-let nameA1 = document.getElementById("name-A1-output");
-let nameA2 = document.getElementById("name-A2-output");
-let nameA3 = document.getElementById("name-A3-output");
-let nameA4 = document.getElementById("name-A4-output");
-nameA1.innerHTML = name[0];
-nameA2.innerHTML = name[0];
-nameA3.innerHTML = name[0];
-nameA4.innerHTML = name[0];
-let nameB1 = document.getElementById("name-B1-output");
-let nameB2 = document.getElementById("name-B2-output");
-let nameB3 = document.getElementById("name-B3-output");
-let nameB4 = document.getElementById("name-B4-output");
-nameB1.innerHTML = name[1];
-nameB2.innerHTML = name[1];
-nameB3.innerHTML = name[1];
-nameB4.innerHTML = name[1];
-let nameC1 = document.getElementById("name-C1-output");
-let nameC2 = document.getElementById("name-C2-output");
-let nameC3 = document.getElementById("name-C3-output");
-let nameC4 = document.getElementById("name-C4-output");
-nameC1.innerHTML = name[2];
-nameC2.innerHTML = name[2];
-nameC3.innerHTML = name[2];
-nameC4.innerHTML = name[2];
-let nameD1 = document.getElementById("name-D1-output");
-let nameD2 = document.getElementById("name-D2-output");
-let nameD3 = document.getElementById("name-D3-output");
-let nameD4 = document.getElementById("name-D4-output");
-nameD1.innerHTML = name[3];
-nameD2.innerHTML = name[3];
-nameD3.innerHTML = name[3];
-nameD4.innerHTML = name[3];
-let resultTumoA = document.getElementById("result-tumoA-output");
-resultTumoA.innerHTML = result[0][0];
-let resultTumoB = document.getElementById("result-tumoB-output");
-resultTumoB.innerHTML = result[1][1];
-let resultTumoC = document.getElementById("result-tumoC-output");
-resultTumoC.innerHTML = result[2][2];
-let resultTumoD = document.getElementById("result-tumoD-output");
-resultTumoD.innerHTML = result[3][3];
-let resultRonAfromB = document.getElementById("result-ronAfromB-output");
-resultRonAfromB.innerHTML = result[0][1];
-let resultRonAfromC = document.getElementById("result-ronAfromC-output");
-resultRonAfromC.innerHTML = result[0][2];
-let resultRonAfromD = document.getElementById("result-ronAfromD-output");
-resultRonAfromD.innerHTML = result[0][3];
-let resultRonBfromA = document.getElementById("result-ronBfromA-output");
-resultRonBfromA.innerHTML = result[1][0];
-let resultRonBfromC = document.getElementById("result-ronBfromC-output");
-resultRonBfromC.innerHTML = result[1][2];
-let resultRonBfromD = document.getElementById("result-ronBfromD-output");
-resultRonBfromD.innerHTML = result[1][3];
-let resultRonCfromA = document.getElementById("result-ronCfromA-output");
-resultRonCfromA.innerHTML = result[2][0];
-let resultRonCfromB = document.getElementById("result-ronCfromB-output");
-resultRonCfromB.innerHTML = result[2][1];
-let resultRonCfromD = document.getElementById("result-ronCfromD-output");
-resultRonCfromD.innerHTML = result[2][3];
-let resultRonDfromA = document.getElementById("result-ronDfromA-output");
-resultRonDfromA.innerHTML = result[3][0];
-let resultRonDfromB = document.getElementById("result-ronDfromB-output");
-resultRonDfromB.innerHTML = result[3][1];
-let resultRonDfromC = document.getElementById("result-ronDfromC-output");
-resultRonDfromC.innerHTML = result[3][2];
-let nameOya = document.getElementById("name-oya-output");
-nameOya.innerHTML = name[oya];
-let resultRyukyoku = document.getElementById("result-ryukyoku-output");
-resultRyukyoku.innerHTML = result_ryukyoku;
+// 名前
+let name0 = document.getElementsByName("output_name_0")
+let name1 = document.getElementsByName("output_name_1")
+let name2 = document.getElementsByName("output_name_2")
+let name3 = document.getElementsByName("output_name_3")
+for (let i = 0; i < players.length; i++) {
+    name0[i].innerHTML = players[0].name
+    name1[i].innerHTML = players[1].name
+    name2[i].innerHTML = players[2].name
+    name3[i].innerHTML = players[3].name
+}
+
+// ツモアガり
+let tsumo0 = document.getElementById("output_tsumo_0")
+let tsumo1 = document.getElementById("output_tsumo_1")
+let tsumo2 = document.getElementById("output_tsumo_2")
+let tsumo3 = document.getElementById("output_tsumo_3")
+tsumo0.innerHTML = horaOutputs[0][0].condition
+tsumo1.innerHTML = horaOutputs[1][1].condition
+tsumo2.innerHTML = horaOutputs[2][2].condition
+tsumo3.innerHTML = horaOutputs[3][3].condition
+
+// ロンアガり
+let ron0from1 = document.getElementById("output_ron_0from1")
+let ron0from2 = document.getElementById("output_ron_0from2")
+let ron0from3 = document.getElementById("output_ron_0from3")
+let ron1from0 = document.getElementById("output_ron_1from0")
+let ron1from2 = document.getElementById("output_ron_1from2")
+let ron1from3 = document.getElementById("output_ron_1from3")
+let ron2from0 = document.getElementById("output_ron_2from0")
+let ron2from1 = document.getElementById("output_ron_2from1")
+let ron2from3 = document.getElementById("output_ron_2from3")
+let ron3from0 = document.getElementById("output_ron_3from0")
+let ron3from1 = document.getElementById("output_ron_3from1")
+let ron3from2 = document.getElementById("output_ron_3from2")
+ron0from1.innerHTML = horaOutputs[0][1].condition
+ron0from2.innerHTML = horaOutputs[0][2].condition
+ron0from3.innerHTML = horaOutputs[0][3].condition
+ron1from0.innerHTML = horaOutputs[1][0].condition
+ron1from2.innerHTML = horaOutputs[1][2].condition
+ron1from3.innerHTML = horaOutputs[1][3].condition
+ron2from0.innerHTML = horaOutputs[2][0].condition
+ron2from1.innerHTML = horaOutputs[2][1].condition
+ron2from3.innerHTML = horaOutputs[2][3].condition
+ron3from0.innerHTML = horaOutputs[3][0].condition
+ron3from1.innerHTML = horaOutputs[3][1].condition
+ron3from2.innerHTML = horaOutputs[3][2].condition
+
+
+let nameOya = document.getElementById("output_name_oya");
+nameOya.innerHTML = ryukyokuOutputs.nameOya
+let resultNoten = document.getElementById("output_ryukyoku");
+resultNoten.innerHTML = ryukyokuOutputs.condition
 
 // 非表示用の属性を削除
 $(".result").removeClass("hidden");
+
 }
