@@ -85,24 +85,26 @@
                     </table>
                     <button type="button" class="add">＋</button>
                     <h2>ルール</h2>
-                    <p>&emsp;<input type="number" class="haikyu" id="haikyu" name="haikyu" placeholder="250" value="250" onfocus="this.select();"><small>00</small>&thinsp;点持ち
-                    &nbsp;<input type="number" class="genten" id="genten" name="genten" placeholder="300" value="300" onfocus="this.select();"><small>00</small>&thinsp;点返し</p>
-                    <p>&emsp;ウマ&thinsp;<input type="number" class="uma_3to2" id="uma_3to2" name="uma_3to2" placeholder="10" value="10" onfocus="this.select();">&thinsp;-
-                    &thinsp;<input type="number" class="uma_4to1" id="uma_4to1" name="uma_4to1" placeholder="30" value="30" onfocus="this.select();"></p>
-                    <p>&emsp;同点時のウマオカ:&nbsp;折半<input type="radio" id="tie_T" name="tie" form="tie" value="1" checked="checked">
-                        &nbsp;起家優先<input type="radio" id="tie_F" name="tie" form="tie" value="0"></p>
-                    <p>&emsp;切り上げ満貫:&nbsp;あり<input type="radio" id="kiriage_T" name="kiriage" form="kiriage" value="1" checked="checked">
-                    &nbsp;なし<input type="radio" id="kiriage_F" name="kiriage" form="kiriage" value="0"></p>
-                    <p>&emsp;70符以上の考慮:&nbsp;する<input type="radio" id="over70_T" name="over70" form="over70" value="1" checked="checked">
-                    &nbsp;しない<input type="radio" id="over70_F" name="over70" form="over70" value="0"></p>
-                    <p>&emsp;残留供託:&nbsp;トップ取り<input type="radio" id="residue_T" name="residue" form="residue" value="1" checked="checked">
-                    &nbsp;そのまま<input type="radio" id="residue_F" name="residue" form="residue" value="0"></p>
+                    <p>&emsp;<input type="number" class="haikyu" id="haikyu" name="haikyu" placeholder="250" value="250" onfocus="this.select();"><small>00</small>&thinsp;点持ち&nbsp;<input type="number" class="genten" id="genten" name="genten" placeholder="300" value="300" onfocus="this.select();"><small>00</small>&thinsp;点返し</p>
+                    <p>&emsp;ウマ&thinsp;<input type="number" class="uma_3to2" id="uma_3to2" name="uma_3to2" placeholder="10" value="10" onfocus="this.select();">&thinsp;–&thinsp;<input type="number" class="uma_4to1" id="uma_4to1" name="uma_4to1" placeholder="30" value="30" onfocus="this.select();"></p>
+                    <p>&emsp;同点時のウマオカ:&nbsp;折半<input type="radio" id="tie_T" name="tie" form="tie" value="1" checked="checked">&nbsp;起家優先<input type="radio" id="tie_F" name="tie" form="tie" value="0"></p>
+                    <p>&emsp;切り上げ満貫:&nbsp;あり<input type="radio" id="kiriage_T" name="kiriage" form="kiriage" value="1" checked="checked">&nbsp;なし<input type="radio" id="kiriage_F" name="kiriage" form="kiriage" value="0"></p>
+                    <p>&emsp;70符以上の考慮:&nbsp;する<input type="radio" id="over70_T" name="over70" form="over70" value="1" checked="checked">&nbsp;しない<input type="radio" id="over70_F" name="over70" form="over70" value="0"></p>
+                    <p>&emsp;残留供託:&nbsp;トップ取り<input type="radio" id="residue_T" name="residue" form="residue" value="1" checked="checked">&nbsp;そのまま<input type="radio" id="residue_F" name="residue" form="residue" value="0"></p>
                     <p>&emsp;通過順位&thinsp;<input type="number" class="target" id="target" name="target" value="1" onfocus="this.select();">&thinsp;位</p>
                     <h3><button type="button" class="calc" id="calc" onclick="doOrasu()">計算</button></h3>
                     <script src="js/orasu.js"></script>
                 </form>
             </main>
             <div class="result hidden">
+                <h2>暫定結果</h2>
+                <table class="preliminary", id="output_prelim">
+                    <tr>
+                        <th>順位</th>
+                        <th>名前</th>
+                        <th>トータル</th>
+                    </tr>
+                </table>
                 <h2><span name="output_name_0"></span>の条件</h2>
                 <table class="conditions">
                     <tr>

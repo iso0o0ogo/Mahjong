@@ -151,7 +151,7 @@ table td {
     border-spacing: 1em;
 }
 .all_players {
-    width: 74%;
+    width: 66%;
     border-collapse: collapse;
     border-spacing: 1em;
 }
@@ -198,7 +198,7 @@ input.score {
 input.haikyu,
 input.genten {
     width: 2em;
-    text-align: center;
+    text-align: right;
 }
 input.honba,
 input.kyotaku,
@@ -215,10 +215,28 @@ input.target {
     border: none;
     border-radius: .3em;
 }
+.preliminary,
 .conditions {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 1em;
+}
+.preliminary td:nth-child(1) {
+    width: 20%;
+    text-align: center;
+    vertical-align: middle;
+}
+.preliminary td:nth-child(2) {
+    width: 40%;
+    text-align: left;
+    vertical-align: middle;
+    padding:0 10%;
+}
+.preliminary td:nth-child(3) {
+    width: 40%;
+    text-align: right;
+    vertical-align: middle;
+    padding:0 10%;
 }
 .conditions td {
     width: 50%;

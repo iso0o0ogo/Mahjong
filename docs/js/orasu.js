@@ -1,3 +1,4 @@
+// フォームの追加・削除
 $(function() {
     $(".add").click(function() {
         $(".all_players").append("<tr> <td><input type=\"text\" class=\"name\" name=\"name\" placeholder=\"Xさん\" onfocus=\"this.select();\"></td> <td><input type=\"number\" class=\"total\" name=\"total\" step=\"0.1\" placeholder=\"0\" onfocus=\"this.select();\"></td> <td><button type=\"button\" class=\"del\">－</button></td> </tr>");
@@ -7,11 +8,11 @@ $(function() {
     });
 });
 
-
+/* オーラス条件関数 */
 
 function doOrasu() {
 
-/* 関数 */
+/* 配列と関数 */
 
 // 子のツモアガり
 let tsumoKo = [
@@ -693,7 +694,7 @@ function delKiriageAndOver70(options, arrayTsumoOrRon) {
     return array
 }
 
-// 親とリーチの確認
+// 親とリーチ時供託の確認
 function checkOyaAndRiichiKyotaku(players, options) {
     // 親
     options.oya = players.filter(item => item.oya == true)[0].id
@@ -706,8 +707,9 @@ function checkOyaAndRiichiKyotaku(players, options) {
     return options
 }
 
-// リーチの確認
+// リーチ時スコアの確認
 function checkRiichiScore(players) {
+    // リーチ
     for (let i = 0; i < players.length; i++) {
         if (players[i].riichi == true) {
             players[i].score -= 1000
@@ -878,6 +880,40 @@ function addTotalChange(players, options, umaoka) {
     return players
 }
 
+// 残留供託
+function calcResidues(players, options) {
+    let array = players.filter(item => item.rankEq == 1)
+    let ave = 0
+    // 折半
+    if (array.length == 1 || array.length == 2 || array.length == 4) {
+        ave = options.kyotaku * 1000 / array.length
+    }
+    else if (array.length == 3) {
+        // 100点単位で切り捨て
+        ave = options.kyotaku * 300
+    }
+    // 1位に追加
+    let residues = [0, 0, 0, 0]
+    for (let i = 0; i < array.length; i++) {
+        residues[i] = ave
+    }
+    // 3人1位の端数を修正
+    if (array.length == 3) {
+        residues[0] = options.kyotaku * 1000 - (residues[1] + residues[2] + residues[3])
+    }
+    return residues
+}
+
+// 残留供託含むスコア
+function addTotalChangeRyukyoku(players, options, residues) {
+    if (options.residue == true) {
+        for (let i = 0; i < players.length; i++) {
+            players[i].totalChange = (players[i].totalChange * 1000 + residues[players[i].rankNeq - 1]) / 1000
+        }
+    }
+    return players
+}
+
 // トータル
 function addTotalFinal(players, allPlayers) {
     for (let i = 0; i < allPlayers.length; i++) {
@@ -935,7 +971,7 @@ function createResults(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, r
     return results
 }
 
-// 文章化
+// 結果を表示
 function docConditions(results, options, horaID, hojyuID) {
     let outputs = {}
     // ツモアガり(和了者と放銃者が同じときは放銃者なしと判定)
@@ -946,6 +982,7 @@ function docConditions(results, options, horaID, hojyuID) {
     else {
         outputs.type = players[hojyuID].name + "からロン"
     }
+    // 文章化
     if (results.every(item => item.judge == true) == true) {
         outputs.condition = "無条件"
     }
@@ -982,7 +1019,7 @@ function docConditions(results, options, horaID, hojyuID) {
                 }
             }
         }
-        // 末尾が<br>のとき削除
+        // 末尾の"<br>"を削除
         if (tmp.slice(-4) == "<br>") {
             tmp = tmp.slice(0, -4)
         }
@@ -1021,40 +1058,6 @@ function addScoreFinalRyukyoku(players, bappu, ryukyokuNum) {
     return players
 }
 
-// 残留供託
-function calcResidues(players, options) {
-    let array = players.filter(item => item.rankEq == 1)
-    let ave = 0
-    // 折半
-    if (array.length == 1 || array.length == 2 || array.length == 4) {
-        ave = options.kyotaku * 1000 / array.length
-    }
-    else if (array.length == 3) {
-        // 100点単位で切り捨て
-        ave = options.kyotaku * 300
-    }
-    // 1位に追加
-    let residues = [0, 0, 0, 0]
-    for (let i = 0; i < array.length; i++) {
-        residues[i] = ave
-    }
-    // 3人1位の端数を修正
-    if (array.length == 3) {
-        residues[0] = options.kyotaku * 1000 - (residues[1] + residues[2] + residues[3])
-    }
-    return residues
-}
-
-// 残留供託含むスコア
-function addTotalChangeRyukyoku(players, options, residues) {
-    if (options.residue == true) {
-        for (let i = 0; i < players.length; i++) {
-            players[i].totalChange = (players[i].totalChange * 1000 + residues[players[i].rankNeq - 1]) / 1000
-        }
-    }
-    return players
-}
-
 // 流局結果を統合
 function createResultsRyukyoku(players, allPlayers, options, bappu) {
     let results = []
@@ -1079,11 +1082,15 @@ function createResultsRyukyoku(players, allPlayers, options, bappu) {
     return results
 }
 
-// 文章化
+// 流局結果を表示
 function docConditionsRyukyoku(results, players, options) {
     let outputs = {}
     outputs.nameOya = players[options.oya].name
-    if (results.every(item => item.judge == false) == true) {
+    // 文章化
+    if (results.every(item => item.judge == true) == true) {
+        outputs.condition = "無条件"
+    }
+    else if (results.every(item => item.judge == false) == true) {
         outputs.condition = "テンパイ必須"
     }
     else {
@@ -1106,7 +1113,7 @@ function docConditionsRyukyoku(results, players, options) {
                 }
             }
         }
-        // 末尾が<br>のとき削除
+        // 末尾の"<br>"を削除
         if (tmp.slice(-4) == "<br>") {
             tmp = tmp.slice(0, -4)
         }
@@ -1115,11 +1122,33 @@ function docConditionsRyukyoku(results, players, options) {
     return outputs
 }
 
-// 和了条件を計算
+// 流局条件を計算
 function ryukyokuConditions(players, allPlayers, options, bappu) {
     let results = createResultsRyukyoku(players, allPlayers, options, bappu)
     let ryukyokuOutputs = docConditionsRyukyoku(results, players, options)
     return ryukyokuOutputs
+}
+
+// 暫定素点
+function addScoreFinalPrelim(players) {
+    for (let i = 0; i < players.length; i++) {
+        players[i].scoreFinal = players[i].score
+    }
+    return players
+}
+
+// 暫定結果を統合
+function createResultsPrelim(players, allPlayers, options) {
+    players = addScoreFinalPrelim(players)
+    players = addScoreRank(players, options)
+    let umaoka = calcUmaoka(players, options)
+    players = addTotalChange(players, options, umaoka)
+    let residues = calcResidues(players, options)
+    players = addTotalChangeRyukyoku(players, options, residues)
+    allPlayers = addTotalFinal(players, allPlayers)
+    allPlayers = addTotalRankAndJudge(allPlayers, options)
+    let results = allPlayers.sort((first, second) => first.rank - second.rank)
+    return results
 }
 
 /* 入力 */
@@ -1172,6 +1201,8 @@ for (let i = 0; i < names.length; i++) {
     }
     allPlayers.push(array)
 }
+
+// 卓内と卓外を統合
 for (let i = players.length - 1; i >= 0; i--) {
     if (allPlayers.filter(item => item.name == players[i].name).length == 0) {
         let array = {
@@ -1213,8 +1244,24 @@ players = checkRiichiScore(players)
 // 計算
 let horaOutputs = horaConditions(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, ronOya)
 let ryukyokuOutputs = ryukyokuConditions(players, allPlayers, options, bappu)
+let results = createResultsPrelim(players, allPlayers, options)
 
 /* 出力 */
+
+// 暫定結果
+for (let i = 0; i < results.length; i++) {
+    let tr = document.createElement("tr")
+    let tdRank = document.createElement("td")
+    let tdName = document.createElement("td")
+    let tdTotal = document.createElement("td")
+    tdRank.textContent = results[i].rank
+    tdName.textContent = results[i].name
+    tdTotal.textContent = results[i].totalFinal
+    tr.appendChild(tdRank)
+    tr.appendChild(tdName)
+    tr.appendChild(tdTotal)
+    document.getElementById("output_prelim").appendChild(tr)
+}
 
 // 名前
 let name0 = document.getElementsByName("output_name_0")
@@ -1264,7 +1311,7 @@ ron3from0.innerHTML = horaOutputs[3][0].condition
 ron3from1.innerHTML = horaOutputs[3][1].condition
 ron3from2.innerHTML = horaOutputs[3][2].condition
 
-
+// 流局
 let nameOya = document.getElementById("output_name_oya");
 nameOya.innerHTML = ryukyokuOutputs.nameOya
 let resultNoten = document.getElementById("output_ryukyoku");
