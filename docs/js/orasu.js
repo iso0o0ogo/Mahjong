@@ -1260,7 +1260,7 @@ for (let i = 0; i < results.length; i++) {
     let tdTotal = document.createElement("td")
     tdRank.textContent = results[i].rank
     tdName.textContent = results[i].name
-    tdTotal.textContent = results[i].totalFinal
+    tdTotal.textContent = results[i].totalFinal.toFixed(1)
     tr.appendChild(tdRank)
     tr.appendChild(tdName)
     tr.appendChild(tdTotal)
