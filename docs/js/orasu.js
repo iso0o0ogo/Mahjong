@@ -1249,6 +1249,10 @@ let results = createResultsPrelim(players, allPlayers, options)
 /* 出力 */
 
 // 暫定結果
+let tbl = document.getElementById("output_prelim")
+for (let i = tbl.rows.length - 1; i >= 1; i--) {
+    tbl.deleteRow(i)
+}
 for (let i = 0; i < results.length; i++) {
     let tr = document.createElement("tr")
     let tdRank = document.createElement("td")
