@@ -806,7 +806,7 @@ function addScoreFinal(players, options, tsumoKo, tsumoOya, ronKo, ronOya, horaI
 // 順位
 function addScoreRank(players, options) {
     for (let i = 0; i < players.length; i++) {
-        // 同点のとき同順位
+        // 同点のとき同順位(最高順位)
         let numEq = 1
         // 同点のとき別順位
         let numNeq = 1
@@ -931,17 +931,27 @@ function addTotalFinal(players, allPlayers) {
 // トータル順位と判定
 function addTotalRankAndJudge(allPlayers, options) {
     for (let i = 0; i < allPlayers.length; i++) {
-        // 順位
+        // 順位(最低順位)
         let num = 1
+        // 順位(最高順位)
+        let numPrelim = 1
         for (let j = 0; j < allPlayers.length; j++) {
             if (allPlayers[i].totalFinal < allPlayers[j].totalFinal) {
                 num += 1
+                numPrelim += 1
             }
-            else if (allPlayers[i].totalFinal == allPlayers[j].totalFinal && allPlayers[i].id > allPlayers[j].id) {
+            // 単独のみ可
+            else if (allPlayers[i].totalFinal == allPlayers[j].totalFinal && i != j && options.solo == true) {
                 num += 1
+            }
+            // タイも可
+            else if (allPlayers[i].totalFinal == allPlayers[j].totalFinal && allPlayers[i].id > allPlayers[j].id && options.solo == false) {
+                num += 1
+                numPrelim += 1
             }
         }
         allPlayers[i].rank = num
+        allPlayers[i].rankPrelim = numPrelim
         // 判定
         if (allPlayers[i].rank <= options.target) {
             allPlayers[i].judge = true
@@ -1147,7 +1157,7 @@ function createResultsPrelim(players, allPlayers, options) {
     players = addTotalChangeRyukyoku(players, options, residues)
     allPlayers = addTotalFinal(players, allPlayers)
     allPlayers = addTotalRankAndJudge(allPlayers, options)
-    let results = allPlayers.sort((first, second) => first.rank - second.rank)
+    let results = allPlayers.sort((first, second) => first.rankPrelim - second.rankPrelim)
     return results
 }
 
@@ -1226,7 +1236,8 @@ let options = {
     "kiriage": document.getElementById("kiriage_T").checked,
     "over70": document.getElementById("over70_T").checked,
     "residue": document.getElementById("residue_T").checked,
-    "target": document.getElementById("target").valueAsNumber
+    "target": document.getElementById("target").valueAsNumber,
+    "solo": document.getElementById("solo_T").checked
 }
 
 /* 実行 */
@@ -1258,7 +1269,7 @@ for (let i = 0; i < results.length; i++) {
     let tdRank = document.createElement("td")
     let tdName = document.createElement("td")
     let tdTotal = document.createElement("td")
-    tdRank.textContent = results[i].rank
+    tdRank.textContent = results[i].rankPrelim
     tdName.textContent = results[i].name
     tdTotal.textContent = results[i].totalFinal.toFixed(1)
     tr.appendChild(tdRank)

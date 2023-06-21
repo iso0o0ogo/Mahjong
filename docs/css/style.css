@@ -227,16 +227,16 @@ input.target {
     vertical-align: middle;
 }
 .preliminary td:nth-child(2) {
-    width: 40%;
+    width: 50%;
     text-align: left;
     vertical-align: middle;
-    padding:0 10%;
+    padding: 0 0 0 3em;
 }
 .preliminary td:nth-child(3) {
-    width: 40%;
+    width: 30%;
     text-align: right;
     vertical-align: middle;
-    padding:0 10%;
+    padding: 0 2em 0 2em;
 }
 .conditions td {
     width: 50%;
@@ -246,7 +246,6 @@ input.target {
 .hidden {
     display: none;
 }
-
 
 /* フッター */
 .footer {
