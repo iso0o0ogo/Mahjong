@@ -1265,6 +1265,12 @@ for (let i = tbl.rows.length - 1; i >= 1; i--) {
 }
 for (let i = 0; i < results.length; i++) {
     let tr = document.createElement("tr")
+    // ボーダーラインの表示
+    if (i < results.length - 1) {
+        if (results[i].rankPrelim <= options.target && results[i + 1].rankPrelim > options.target) {
+            tr.classList.add("border")
+        }
+    }
     let tdRank = document.createElement("td")
     let tdName = document.createElement("td")
     let tdTotal = document.createElement("td")

@@ -221,6 +221,9 @@ input.target {
     border-collapse: collapse;
     border-spacing: 1em;
 }
+.preliminary tr.border {
+    border-bottom: solid 1px var(--text-color);
+}
 .preliminary td:nth-child(1) {
     width: 20%;
     text-align: center;
