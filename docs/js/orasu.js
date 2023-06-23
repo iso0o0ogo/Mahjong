@@ -868,7 +868,6 @@ function calcUmaoka(players, options) {
     else if (players.filter(item => item.rankEq == 2).length == 3) {
         umaoka[1] = oka - (umaoka[0] + umaoka[2] + umaoka[3])
     }
-    console.log(JSON.stringify(umaoka))
     return umaoka
 }
 
@@ -975,7 +974,7 @@ function createResults(players, allPlayers, options, tsumoKo, tsumoOya, ronKo, r
         allPlayers = addTotalFinal(players, allPlayers)
         allPlayers = addTotalRankAndJudge(allPlayers, options)
         array.display = players[horaID].display
-        array.judge = allPlayers[horaID].judge
+        array.judge = allPlayers.filter(item => item.name == players[horaID].name)[0].judge
         results.push(array)
     }
     return results
@@ -1083,7 +1082,7 @@ function createResultsRyukyoku(players, allPlayers, options, bappu) {
         allPlayers = addTotalRankAndJudge(allPlayers, options)
         array.display = players[options.oya].display
         array.tenpai = players[options.oya].tenpai
-        array.judge = allPlayers[options.oya].judge
+        array.judge = allPlayers.filter(item => item.name == players[options.oya].name)[0].judge
         // 親のノーテン
         if (array.tenpai[options.oya] == false) {
             results.push(array)
