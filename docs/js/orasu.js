@@ -855,6 +855,7 @@ function calcUmaoka(players, options) {
                 // 100点単位で切り捨て
                 ave = Math.floor(ave / 100) * 100
             }
+            // 同順位の人数分追加
             for (let j = 0; j < array.length; j++) {
                 umaoka.push(ave)
             }
@@ -891,7 +892,7 @@ function calcResidues(players, options) {
         // 100点単位で切り捨て
         ave = options.kyotaku * 300
     }
-    // 1位に追加
+    // 1位の人数分追加
     let residues = [0, 0, 0, 0]
     for (let i = 0; i < array.length; i++) {
         residues[i] = ave
