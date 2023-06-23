@@ -835,31 +835,29 @@ function calcUmaoka(players, options) {
     let umaoka = []
     for (let i = 0; i < players.length; i++) {
         let array = players.filter(item => item.rankEq == i + 1)
-        let sum = 0
-        let ave = 0
-        // ウマ
-        for (let j = 0; j < array.length; j++) {
-            sum += uma[i + j]
-        }
-        // オカ
-        if (i == 0) {
-            sum += oka
-        }
-        // 折半
-        if (array.length == 1 || array.length == 2 || array.length == 4) {
-            ave = sum / array.length
-        }
-        else if (array.length == 3) {
-            ave = sum / array.length
-            // 100点単位で切り捨て
-            ave = Math.floor(ave / 100) * 100
-        }
-        umaoka.push(ave)
-    }
-    // 同順位の0値を修正
-    for (let i = 0; i < umaoka.length; i++) {
-        if (umaoka[i] == 0) {
-            umaoka[i] = umaoka[i - 1]
+        if (array.length > 0) {
+            let sum = 0
+            let ave = 0
+            // ウマ
+            for (let j = 0; j < array.length; j++) {
+                sum += uma[i + j]
+            }
+            // オカ
+            if (i == 0) {
+                sum += oka
+            }
+            // 折半
+            if (array.length == 1 || array.length == 2 || array.length == 4) {
+                ave = sum / array.length
+            }
+            else if (array.length == 3) {
+                ave = sum / array.length
+                // 100点単位で切り捨て
+                ave = Math.floor(ave / 100) * 100
+            }
+            for (let j = 0; j < array.length; j++) {
+                umaoka.push(ave)
+            }
         }
     }
     // 3人同順位の端数を修正
@@ -869,6 +867,7 @@ function calcUmaoka(players, options) {
     else if (players.filter(item => item.rankEq == 2).length == 3) {
         umaoka[1] = oka - (umaoka[0] + umaoka[2] + umaoka[3])
     }
+    console.log(JSON.stringify(umaoka))
     return umaoka
 }
 
