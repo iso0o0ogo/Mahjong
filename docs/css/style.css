@@ -143,7 +143,7 @@ table tr {
     cursor: pointer;
 }
 table tr.border {
-    border-bottom: double 2px var(--sub-color);
+    border-bottom: double 3px var(--sub-color);
 }
 table td {
     text-align: center;
