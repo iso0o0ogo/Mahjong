@@ -145,6 +145,10 @@ table tr {
 table tr.border {
     border-bottom: double 3px var(--sub-color);
 }
+table tr.dummy {
+    visibility: collapse;
+}
+table th,
 table td {
     text-align: center;
     }
@@ -164,7 +168,12 @@ table td {
     border: none;
     border-radius: 1.8em;
 }
-.del {
+.del,
+.del_dummy,
+.plus_honba,
+.plus_kyotaku,
+.minus_honba,
+.minus_kyotaku {
     background: var(--sub-color);
     border: none;
     border-radius: 1.8em;
@@ -182,15 +191,19 @@ input {
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
-input.name {
+input.name,
+input.name_dummy {
     width: 6em;
 }
-input.total {
+input.total,
+input.total_dummy {
     width: 3.5em;
     text-align: right;
 }

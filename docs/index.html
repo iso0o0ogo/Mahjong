@@ -73,13 +73,19 @@
                             <td><input type="checkbox" class="riichi" id="riichi_3" name="riichi" form="riichi" value="3"></td>
                         </tr>
                     </table>
-                    <p>&emsp;本場&thinsp;<input type="number" class="honba" id="honba" name="honba" value="0" min="0" max="20" onfocus="this.select();">&ensp;供託&thinsp;<input type="number" class="kyotaku" id="kyotaku" name="kyotaku" value="0" min="0" max="20" onfocus="this.select();"></p>
+                    <p>&emsp;本場&thinsp;<button type="button" class="minus_honba">－</button>&thinsp;<input type="number" class="honba" id="honba" name="honba" value="0" min="0" max="20" onfocus="this.select();">&thinsp;<button type="button" class="plus_honba">＋</button></p>
+                    <p>&emsp;供託&thinsp;<button type="button" class="minus_kyotaku">－</button>&thinsp;<input type="number" class="kyotaku" id="kyotaku" name="kyotaku" value="0" min="0" max="20" onfocus="this.select();">&thinsp;<button type="button" class="plus_kyotaku">＋</button></p>
                     <h2>卓外</h2>
                     <table class="all_players">
                         <tr class="border">
                             <th>名前</th>
                             <th>トータル</th>
                             <th></th>
+                        </tr>
+                        <tr class="dummy">
+                            <td><input type="text" class="name_dummy" name="name_dummy" placeholder="Xさん" onfocus="this.select();"></td>
+                            <td><input type="number" class="total_dummy" name="total_dummy" step="0.1" placeholder="0" onfocus="this.select();"></td>
+                            <td><button type="button" class="del_dummy">－</button></td>
                         </tr>
                     </table>
                     <button type="button" class="add">＋</button>

@@ -1,7 +1,82 @@
+// 本場と供託の増加・減少
+$(function() {
+    $(".plus_honba").click(function() {
+        let input = $("#honba");
+        let currentValue = parseInt(input.val());
+        if (currentValue < 20) {
+            input.val(currentValue + 1);
+        }
+    });
+    $(".plus_kyotaku").click(function() {
+        let input = $("#kyotaku");
+        let currentValue = parseInt(input.val());
+        if (currentValue < 20) {
+            input.val(currentValue + 1);
+        }
+    });
+    $(".minus_honba").click(function() {
+        let input = $("#honba");
+        let currentValue = parseInt(input.val());
+        if (currentValue > 0) {
+            input.val(currentValue - 1);
+        }
+    });
+    $(".minus_kyotaku").click(function() {
+        let input = $("#kyotaku");
+        let currentValue = parseInt(input.val());
+        if (currentValue > 0) {
+            input.val(currentValue - 1);
+        }
+    });
+});
+
 // フォームの追加・削除
+// $(function() {
+//     $(".add").click(function() {
+//         $(".all_players").append("<tr> <td><input type=\"text\" class=\"name\" name=\"name\" placeholder=\"Xさん\" onfocus=\"this.select();\"></td> <td><input type=\"number\" class=\"total\" name=\"total\" step=\"0.1\" placeholder=\"0\" onfocus=\"this.select();\"></td> <td><button type=\"button\" class=\"del\">－</button></td> </tr>");
+//     });
+//     $(".all_players").on("click", ".del", function() {
+//         $(this).closest("tr").remove();
+//     });
+// });
 $(function() {
     $(".add").click(function() {
-        $(".all_players").append("<tr> <td><input type=\"text\" class=\"name\" name=\"name\" placeholder=\"Xさん\" onfocus=\"this.select();\"></td> <td><input type=\"number\" class=\"total\" name=\"total\" step=\"0.1\" placeholder=\"0\" onfocus=\"this.select();\"></td> <td><button type=\"button\" class=\"del\">－</button></td> </tr>");
+        let newRow = $("<tr></tr>");
+        let nameCell = $("<td></td>").append(
+            $("<input>", {
+                type: "text",
+                class: "name",
+                name: "name",
+                placeholder: "Xさん",
+                focus: function() {
+                    this.select();
+                }
+            })
+        );
+        let totalCell = $("<td></td>").append(
+            $("<input>", {
+                type: "number",
+                class: "total",
+                name: "total",
+                step: "0.1",
+                placeholder: "0",
+                focus: function() {
+                    this.select();
+                }
+            })
+        );
+        let delCell = $("<td></td>").append(
+            $("<button>", {
+                type: "button",
+                class: "del",
+                text: "－",
+                click: function() {
+                    $(this).closest("tr").remove();
+                }
+            })
+        );
+        newRow.append(nameCell, totalCell, delCell);
+        $(".all_players").append(newRow);
     });
     $(".all_players").on("click", ".del", function() {
         $(this).closest("tr").remove();
@@ -1114,7 +1189,7 @@ function docConditionsRyukyoku(results, players, options) {
                 // 末尾の"・"を削除
                 tmp = tmp.slice(0, -1)
                 let array = results[i].tenpai.filter(item => item == true)
-                if (array.length == 0 || array.length == 3) {
+                if (array.length == 0 || array.length == 4) {
                     tmp = tmp + results[i].display + "<br>"
                 }
                 else {
